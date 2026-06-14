@@ -608,9 +608,151 @@
   #us-stocks-list .card [style*="color:#4ade80"] {
     color:#fff3c7 !important;
   }
+  .record-action-bar {
+    position:sticky;
+    top:66px;
+    z-index:18;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin:-2px 0 14px;
+    padding:8px 0;
+    backdrop-filter:blur(16px);
+  }
+  .record-action {
+    border:none;
+    border-radius:16px;
+    padding:13px 12px;
+    font-size:15px;
+    font-weight:900;
+    cursor:pointer;
+    color:#071318;
+    box-shadow:0 12px 28px rgba(0,0,0,0.25);
+  }
+  .record-action.expense { background:linear-gradient(135deg,#FE8E17,#F4790D); }
+  .record-action.income { background:linear-gradient(135deg,#C0DEDF,#3C9A9E); }
+  .invest-toolbar {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-bottom:14px;
+  }
+  .invest-toolbar button {
+    border:1px solid rgba(255,255,255,0.18);
+    border-radius:15px;
+    padding:12px 10px;
+    cursor:pointer;
+    font-size:14px;
+    font-weight:900;
+    color:#f8fbff;
+    background:rgba(20,38,44,0.64);
+    box-shadow:0 12px 26px rgba(0,0,0,0.18);
+  }
+  .invest-toolbar .alert-btn {
+    color:#071318;
+    background:linear-gradient(135deg,#F4BE6B,#FE8E17);
+  }
+  .exit-alert-pill {
+    margin:0 0 8px;
+    padding:8px 10px;
+    border-radius:12px;
+    font-size:12px;
+    font-weight:800;
+    color:#fff7ed;
+    border:1px solid rgba(244,190,107,0.34);
+    background:rgba(244,121,13,0.18);
+  }
+  .exit-alert-pill.hit {
+    color:#052022;
+    background:linear-gradient(135deg,#F4BE6B,#FE8E17);
+    border-color:rgba(255,255,255,0.36);
+  }
+
+  /* v14 orange/teal glass refresh */
+  :root {
+    --bg:#061d22;
+    --card:rgba(8,31,36,0.58);
+    --border:rgba(192,222,223,0.22);
+    --accent:#3C9A9E;
+    --accent2:#F4790D;
+    --mid:#8cc5c8;
+    --pale:#eefcff;
+    --text:#f7fbff;
+    --muted:#b9d7d9;
+    --yellow:#F4BE6B;
+  }
+  body {
+    background:#061d22;
+    background-image:
+      radial-gradient(circle at 8% 8%, rgba(192,222,223,0.50) 0%, rgba(60,154,158,0.22) 27%, transparent 52%),
+      radial-gradient(circle at 92% 14%, rgba(254,142,23,0.40) 0%, rgba(244,121,13,0.18) 26%, transparent 55%),
+      radial-gradient(circle at 16% 92%, rgba(244,190,107,0.28) 0%, transparent 46%),
+      linear-gradient(135deg,#05252b 0%,#071318 48%,#102a2d 100%);
+  }
+  body::before {
+    background-image:
+      radial-gradient(circle, rgba(255,255,255,0.13) 1px, transparent 1px),
+      linear-gradient(115deg, transparent 0 21%, rgba(192,222,223,0.08) 21.2% 21.35%, transparent 21.6% 100%);
+    background-size:18px 18px, 220px 220px;
+  }
+  header {
+    background:rgba(5,21,25,0.82) !important;
+    border-bottom:1px solid rgba(192,222,223,0.18) !important;
+  }
+  .bottom-nav {
+    background:rgba(5,21,25,0.88) !important;
+    border-top:1px solid rgba(192,222,223,0.18) !important;
+  }
+  .card,
+  .gradient-card,
+  .modal-sheet {
+    background:
+      linear-gradient(145deg, rgba(255,255,255,0.18), rgba(255,255,255,0.055) 34%, rgba(0,0,0,0.18)),
+      rgba(8,31,36,0.62) !important;
+    border:1px solid rgba(192,222,223,0.28) !important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.18), 0 18px 45px rgba(0,0,0,0.30) !important;
+  }
+  .gradient-card::before {
+    background:
+      radial-gradient(circle at 12% 10%, rgba(192,222,223,0.34), transparent 36%),
+      radial-gradient(circle at 94% 4%, rgba(254,142,23,0.24), transparent 42%) !important;
+  }
+  .btn-primary,
+  #itab-holdings {
+    background:linear-gradient(135deg,#FE8E17,#F4790D) !important;
+    color:#071318 !important;
+    box-shadow:0 12px 28px rgba(244,121,13,0.20);
+  }
+  input,
+  select {
+    background:rgba(4,20,24,0.64) !important;
+    border-color:rgba(192,222,223,0.24) !important;
+    color:#f8fbff !important;
+  }
+  .progress-bar div,
+  #savings-bar {
+    background:linear-gradient(90deg,#FE8E17,#F4BE6B,#3C9A9E) !important;
+  }
+  .nav-tab.active {
+    color:#F4BE6B !important;
+  }
+  .fab {
+    display:none !important;
+  }
+  #tw-stocks-list .card div[style*="font-weight:700"],
+  #us-stocks-list .card div[style*="font-weight:700"],
+  #tw-stocks-list .card div[style*="font-weight:800"],
+  #us-stocks-list .card div[style*="font-weight:800"],
+  #tw-stocks-list .card span[style*="font-weight:700"],
+  #us-stocks-list .card span[style*="font-weight:700"] {
+    color:#fff8e5 !important;
+    text-shadow:0 2px 8px rgba(0,0,0,0.82), 0 0 16px rgba(254,142,23,0.16) !important;
+  }
   @media (max-width:420px) {
     #grand-total { font-size:38px !important; }
     #portfolio-total { font-size:28px !important; }
+    .record-action-bar { top:62px; }
+    .invest-toolbar { grid-template-columns:1fr; }
   }
   @media (max-width:420px) {
     .page > .gradient-card:first-child { min-height:238px; }
@@ -796,7 +938,7 @@ const CONFIG = {
   <button onclick="exportToExcel()" style="width:100%; background:linear-gradient(135deg,#166534,#14532d); border:1px solid rgba(74,222,128,0.3); color:#4ade80; padding:13px; border-radius:14px; cursor:pointer; font-size:14px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:8px;">
     📊 匯出 Excel 報表
   </button>
-  <div style="text-align:center; color:#315d84; font-size:10px; margin:12px 0 2px;">版面 v13 · 投資數字強化版</div>
+  <div style="text-align:center; color:#315d84; font-size:10px; margin:12px 0 2px;">版面 v14 · 收入總覽提醒版</div>
 </div>
 
 <!-- PAGE 2: 投資 -->
@@ -828,12 +970,17 @@ const CONFIG = {
           <div id="portfolio-realized" style="font-size:13px; font-weight:700; margin-top:2px; color:#fbbf24;">—</div>
         </div>
       </div>
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px;">
-        <div id="price-updated" style="font-size:11px; color:#49769F;"></div>
-        <button onclick="refreshPrices()" style="background:rgba(56,189,248,0.12); border:1px solid rgba(56,189,248,0.3); color:#7BBDE8; padding:7px 12px; border-radius:10px; cursor:pointer; font-size:12px; font-weight:600;">
-          ↻ 更新股價
-        </button>
-      </div>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px;">
+      <div id="price-updated" style="font-size:11px; color:#49769F;"></div>
+      <button onclick="refreshPrices()" style="background:rgba(56,189,248,0.12); border:1px solid rgba(56,189,248,0.3); color:#7BBDE8; padding:7px 12px; border-radius:10px; cursor:pointer; font-size:12px; font-weight:600;">
+        ↻ 更新股價
+      </button>
+    </div>
+  </div>
+
+    <div class="invest-toolbar">
+      <button class="alert-btn" onclick="openExitAlertModal()">設定出倉提醒</button>
+      <button onclick="openModal('invest-modal')">新增持倉</button>
     </div>
 
     <!-- 台股 vs 美股 損益卡 -->
@@ -936,15 +1083,26 @@ const CONFIG = {
     </div>
   </div>
 
+  <!-- 收入來源 -->
+  <div class="card" style="margin-bottom:14px;">
+    <div style="font-size:14px; font-weight:700; margin-bottom:12px;">收入來源總覽</div>
+    <div id="income-breakdown"></div>
+  </div>
+
   <!-- 分類細項 -->
   <div class="card">
-    <div style="font-size:14px; font-weight:600; margin-bottom:12px;">支出分類明細</div>
+    <div style="font-size:14px; font-weight:700; margin-bottom:12px;">支出分類明細</div>
     <div id="category-breakdown"></div>
   </div>
 </div>
 
 <!-- PAGE 4: 記帳 -->
 <div id="page-records" class="page">
+
+  <div class="record-action-bar">
+    <button class="record-action expense" onclick="openTransactionModal('支出')">新增支出</button>
+    <button class="record-action income" onclick="openTransactionModal('收入')">新增收入</button>
+  </div>
 
   <!-- 月份篩選 -->
   <div style="overflow-x:auto; padding-bottom:4px; margin-bottom:14px; -webkit-overflow-scrolling:touch;">
@@ -1043,12 +1201,12 @@ const CONFIG = {
     <div id="add-pos-name" style="font-size:14px; color:#6EA2B3; margin-bottom:16px;"></div>
     <div style="display:flex; flex-direction:column; gap:12px;">
       <div>
-        <label style="font-size:12px; color:#6EA2B3; display:block; margin-bottom:5px;">加買價格</label>
-        <input type="number" id="add-pos-price" placeholder="成交價格" inputmode="decimal">
+        <label style="font-size:12px; color:#6EA2B3; display:block; margin-bottom:5px;">手動輸入成交均價</label>
+        <input type="number" id="add-pos-price" placeholder="銀行實際成交價" inputmode="decimal">
       </div>
       <div>
-        <label style="font-size:12px; color:#6EA2B3; display:block; margin-bottom:5px;">加買數量（張/股）</label>
-        <input type="number" id="add-pos-qty" placeholder="數量" inputmode="decimal" oninput="calcNewAvg()">
+        <label style="font-size:12px; color:#6EA2B3; display:block; margin-bottom:5px;">手動輸入加倉數量（張/股）</label>
+        <input type="number" id="add-pos-qty" placeholder="實際成交數量" inputmode="decimal" oninput="calcNewAvg()">
       </div>
       <div id="add-pos-hint" style="background:#001A36; border-radius:10px; padding:10px; font-size:12px; display:none;">
         <div style="color:#6EA2B3; margin-bottom:4px;">加倉後均價預覽</div>
@@ -1086,7 +1244,7 @@ const CONFIG = {
       </div>
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
         <div>
-          <label style="font-size:12px; color:#6EA2B3; display:block; margin-bottom:5px;">購買均價</label>
+          <label style="font-size:12px; color:#6EA2B3; display:block; margin-bottom:5px;">手動輸入購買均價</label>
           <input type="number" id="inv-avg-price" placeholder="0" inputmode="decimal">
         </div>
         <div>
@@ -1155,12 +1313,12 @@ const CONFIG = {
     <div style="display:flex; flex-direction:column; gap:12px;">
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
         <div>
-          <label style="font-size:12px; color:#6EA2B3; display:block; margin-bottom:5px;">出售數量</label>
-          <input type="number" id="close-pos-qty" placeholder="0" inputmode="decimal" step="0.001" oninput="calcClosePnl()">
+          <label style="font-size:12px; color:#6EA2B3; display:block; margin-bottom:5px;">手動輸入出倉數量</label>
+          <input type="number" id="close-pos-qty" placeholder="實際成交數量" inputmode="decimal" step="0.001" oninput="calcClosePnl()">
         </div>
         <div>
-          <label style="font-size:12px; color:#6EA2B3; display:block; margin-bottom:5px;">出售價格 <span id="close-price-hint" style="color:#7BBDE8; font-size:11px;"></span></label>
-          <input type="number" id="close-pos-price" placeholder="0" inputmode="decimal" oninput="calcClosePnl()">
+          <label style="font-size:12px; color:#6EA2B3; display:block; margin-bottom:5px;">手動輸入實際成交價 <span id="close-price-hint" style="color:#7BBDE8; font-size:11px;"></span></label>
+          <input type="number" id="close-pos-price" placeholder="銀行成交價" inputmode="decimal" oninput="calcClosePnl()">
         </div>
       </div>
       <!-- 損益預覽 -->
@@ -1174,8 +1332,44 @@ const CONFIG = {
           <div id="cpv-pnl" style="font-size:22px; font-weight:800;">—</div>
         </div>
       </div>
-      <div style="font-size:11px; color:#49769F;">了結後數量會自動減少，獲利會記入「投資收入」</div>
+      <div style="font-size:11px; color:#49769F;">了結後數量會自動減少，損益會依你手動輸入的銀行成交價計算。</div>
       <button onclick="saveClosePosition()" class="btn-primary" style="margin-top:4px;">確認了結</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================
+     MODAL: 出倉提醒
+======================================================== -->
+<div id="exit-alert-modal" class="modal-overlay" onclick="backdropClose(event,'exit-alert-modal')">
+  <div class="modal-sheet">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+      <div style="font-size:18px; font-weight:700;">出倉提醒</div>
+      <button onclick="closeModal('exit-alert-modal')" style="background:rgba(10,65,116,0.7); border:1px solid rgba(125,189,232,0.15); color:#BDD8E9; width:32px; height:32px; border-radius:8px; cursor:pointer; font-size:16px; line-height:1;">✕</button>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:12px;">
+      <div>
+        <label style="font-size:12px; color:#6EA2B3; display:block; margin-bottom:5px;">選擇持股</label>
+        <select id="exit-alert-investment" onchange="syncExitAlertForm()"></select>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div>
+          <label style="font-size:12px; color:#6EA2B3; display:block; margin-bottom:5px;">提醒類型</label>
+          <select id="exit-alert-mode" onchange="syncExitAlertForm()">
+            <option value="profit">獲利達標</option>
+            <option value="loss">停損提醒</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:12px; color:#6EA2B3; display:block; margin-bottom:5px;">目標％</label>
+          <input type="number" id="exit-alert-percent" placeholder="例：20" inputmode="decimal" min="0" step="0.1" oninput="syncExitAlertForm()">
+        </div>
+      </div>
+      <div id="exit-alert-preview" style="background:#001A36; border-radius:12px; padding:12px; font-size:12px; color:#BDD8E9;">—</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <button onclick="saveExitAlert()" class="btn-primary">儲存提醒</button>
+        <button onclick="deleteExitAlert()" style="border:1px solid rgba(248,113,113,0.32); background:rgba(248,113,113,0.14); color:#ffd6d6; border-radius:12px; font-weight:800; cursor:pointer;">刪除提醒</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1225,6 +1419,8 @@ let state = {
   initBalanceRowId: null,
   cashAnchorAt: null,
   usdRate: CONFIG.usdRate,
+  exitAlerts: {},
+  exitAlertsRowId: null,
   txType: '支出',
   selMonth: new Date().getMonth() + 1,
   recFilter: 0,
@@ -1242,6 +1438,7 @@ async function init() {
   document.getElementById('tx-date').value = new Date().toISOString().split('T')[0];
   document.getElementById('current-month-label').textContent = `${state.selMonth}月`;
   document.getElementById('savings-goal-label').textContent = CONFIG.savingsGoal.toLocaleString();
+  state.exitAlerts = loadExitAlerts();
   selectTxType('支出');
   buildMonthTabs();
   await refreshData();
@@ -1499,12 +1696,15 @@ document.addEventListener('visibilitychange', () => {
 // ── 手動現金 ──────────────────────────────────────────────
 const INIT_BALANCE_NOTE = '__APP_SETTING_INIT_BALANCE__';
 const INIT_BALANCE_PREFIX = '__APP_SETTING_INIT_BALANCE__|';
+const EXIT_ALERTS_PREFIX = '__APP_SETTING_EXIT_ALERTS__|';
 
 function extractAppSettings(rows) {
   const txs = [];
   let found = null;
+  let alertFound = null;
   rows.forEach(row => {
     if (row && (row.note === INIT_BALANCE_NOTE || String(row.note || '').startsWith(INIT_BALANCE_PREFIX))) found = row;
+    else if (row && String(row.note || '').startsWith(EXIT_ALERTS_PREFIX)) alertFound = row;
     else txs.push(row);
   });
   if (found) {
@@ -1520,6 +1720,18 @@ function extractAppSettings(rows) {
     const local = localStorage.getItem('initBalance');
     state.initBalance = local !== null ? parseFloat(local) || 0 : 0;
     state.cashAnchorAt = localStorage.getItem('cashAnchorAt') || null;
+  }
+  if (alertFound) {
+    state.exitAlertsRowId = alertFound.id;
+    try {
+      state.exitAlerts = JSON.parse(String(alertFound.note).slice(EXIT_ALERTS_PREFIX.length)) || {};
+      localStorage.setItem('assetExitAlerts', JSON.stringify(state.exitAlerts));
+    } catch (_) {
+      state.exitAlerts = loadExitAlerts();
+    }
+  } else {
+    state.exitAlertsRowId = null;
+    state.exitAlerts = loadExitAlerts();
   }
   return txs;
 }
@@ -1690,6 +1902,116 @@ function renderDebts() {
   }
 }
 
+// ── Investment exit alerts ───────────────────────────────
+function loadExitAlerts() {
+  try {
+    return JSON.parse(localStorage.getItem('assetExitAlerts') || '{}');
+  } catch (_) {
+    return {};
+  }
+}
+
+function saveExitAlertsLocal() {
+  localStorage.setItem('assetExitAlerts', JSON.stringify(state.exitAlerts || {}));
+}
+
+async function syncExitAlertsOnline() {
+  saveExitAlertsLocal();
+  if (!sb) return true;
+  const rec = {
+    type: '收入',
+    category: '系統設定',
+    amount: 0,
+    date: new Date().toISOString().split('T')[0],
+    note: EXIT_ALERTS_PREFIX + JSON.stringify(state.exitAlerts || {})
+  };
+  const result = state.exitAlertsRowId
+    ? await sb.from('transactions').update(rec).eq('id', state.exitAlertsRowId)
+    : await sb.from('transactions').insert(rec);
+  if (result.error) {
+    toast('提醒已暫存在本機，線上同步失敗');
+    return false;
+  }
+  const saved = Array.isArray(result.data) ? result.data[0] : null;
+  if (saved && saved.id) state.exitAlertsRowId = saved.id;
+  return true;
+}
+
+function getExitAlertInfo(inv, price, hasPrice) {
+  const alert = state.exitAlerts?.[inv.id];
+  if (!alert || !alert.percent || !inv.avg_price) return null;
+  const pct = hasPrice ? ((price - inv.avg_price) / inv.avg_price * 100) : 0;
+  const target = Math.abs(parseFloat(alert.percent) || 0);
+  if (!target) return null;
+  const isLoss = alert.mode === 'loss';
+  const hit = hasPrice && (isLoss ? pct <= -target : pct >= target);
+  return {
+    hit,
+    pct,
+    text: hit
+      ? `提醒：${isLoss ? '已到停損' : '已到獲利'} ${target}% ，可以檢查是否出倉`
+      : `提醒中：${isLoss ? '跌到' : '漲到'} ${target}% 通知出倉，目前 ${hasPrice ? (pct >= 0 ? '+' : '') + pct.toFixed(1) + '%' : '等待現價'}`
+  };
+}
+
+function openExitAlertModal(id) {
+  const options = state.investments.map(inv => `<option value="${inv.id}">${inv.name}（${inv.ticker}）</option>`).join('');
+  if (!options) { toast('請先新增持倉'); return; }
+  const sel = document.getElementById('exit-alert-investment');
+  sel.innerHTML = options;
+  sel.value = id || state.investments[0].id;
+  const alert = state.exitAlerts?.[sel.value] || { mode:'profit', percent:'' };
+  document.getElementById('exit-alert-mode').value = alert.mode || 'profit';
+  document.getElementById('exit-alert-percent').value = alert.percent || '';
+  syncExitAlertForm();
+  openModal('exit-alert-modal');
+}
+
+function syncExitAlertForm() {
+  const id = document.getElementById('exit-alert-investment').value;
+  const inv = state.investments.find(i => i.id == id);
+  if (!inv) return;
+  const mode = document.getElementById('exit-alert-mode').value;
+  const percent = Math.abs(parseFloat(document.getElementById('exit-alert-percent').value) || 0);
+  const base = inv.avg_price || 0;
+  const targetPrice = !percent ? 0 : mode === 'loss'
+    ? base * (1 - percent / 100)
+    : base * (1 + percent / 100);
+  const current = state.prices[inv.ticker];
+  const currentText = current ? `${inv.market === '台股' ? 'NT$' : '$'} ${current.toFixed(2)}` : '等待股價';
+  const targetText = targetPrice ? `${inv.market === '台股' ? 'NT$' : '$'} ${targetPrice.toFixed(2)}` : '請輸入目標％';
+  document.getElementById('exit-alert-preview').innerHTML =
+    `<div style="font-weight:800; margin-bottom:6px;">${inv.name}</div>
+     <div>目前：${currentText}</div>
+     <div>提醒價：約 ${targetText}</div>`;
+}
+
+async function saveExitAlert() {
+  const id = document.getElementById('exit-alert-investment').value;
+  const percent = Math.abs(parseFloat(document.getElementById('exit-alert-percent').value) || 0);
+  if (!id || !percent) { toast('請選持股並輸入目標％'); return; }
+  state.exitAlerts[id] = {
+    mode: document.getElementById('exit-alert-mode').value,
+    percent
+  };
+  await syncExitAlertsOnline();
+  closeModal('exit-alert-modal');
+  if (sb) await refreshData();
+  else renderInvestments();
+  toast('✓ 出倉提醒已設定');
+}
+
+async function deleteExitAlert() {
+  const id = document.getElementById('exit-alert-investment').value;
+  if (!id) return;
+  delete state.exitAlerts[id];
+  await syncExitAlertsOnline();
+  closeModal('exit-alert-modal');
+  if (sb) await refreshData();
+  else renderInvestments();
+  toast('提醒已刪除');
+}
+
 // ── Render: Investments ───────────────────────────────────
 function renderInvestments() {
   const tw = state.investments.filter(i=>i.market==='台股');
@@ -1724,6 +2046,7 @@ function renderInvestments() {
                              : `NT$ ${Math.round(valTWD).toLocaleString()} <span style="font-size:11px;color:#6EA2B3;">($${(price*inv.quantity).toFixed(0)})</span>`;
     const costLabel  = isTW ? fmtNT(costTWD)
                              : `NT$ ${Math.round(costTWD).toLocaleString()} <span style="font-size:11px;color:#6EA2B3;">($${(inv.avg_price*inv.quantity).toFixed(0)})</span>`;
+    const alertInfo = getExitAlertInfo(inv, price, hasP);
 
     return `
     <div class="card card-animated" style="margin-bottom:10px; animation-delay:${idx*60}ms;">
@@ -1745,6 +2068,7 @@ function renderInvestments() {
         <div><div style="color:#49769F; margin-bottom:2px;">均價</div><div>${avgLabel}</div></div>
         <div><div style="color:#49769F; margin-bottom:2px;">投入資金</div><div>${costLabel}</div></div>
       </div>
+      ${alertInfo ? `<div class="exit-alert-pill ${alertInfo.hit ? 'hit' : ''}">${alertInfo.text}</div>` : ''}
       <div style="display:flex; justify-content:space-between; align-items:center; padding-top:6px; border-top:1px solid rgba(125,189,232,0.1);">
         <div style="font-size:12px;">
           <span style="color:#49769F;">未實現: </span>
@@ -1753,6 +2077,7 @@ function renderInvestments() {
         <div style="display:flex; gap:6px;">
           <button onclick="openAddPosition('${inv.id}')" style="background:rgba(10,65,116,0.6); color:#7BBDE8; border:1px solid rgba(125,189,232,0.2); padding:5px 9px; border-radius:8px; font-size:11px; cursor:pointer; font-weight:600;">加倉</button>
           <button onclick="openClosePosition('${inv.id}')" style="background:rgba(10,50,30,0.6); color:#4ade80; border:1px solid rgba(74,222,128,0.2); padding:5px 9px; border-radius:8px; font-size:11px; cursor:pointer; font-weight:600;">了結</button>
+          <button onclick="openExitAlertModal('${inv.id}')" style="background:rgba(244,121,13,0.18); color:#F4BE6B; border:1px solid rgba(244,190,107,0.28); padding:5px 9px; border-radius:8px; font-size:11px; cursor:pointer; font-weight:600;">提醒</button>
           <button onclick="openEditInvestment('${inv.id}')" class="btn-edit">編輯</button>
           <button onclick="deleteInvestment('${inv.id}')" class="btn-danger">刪除</button>
         </div>
@@ -1827,6 +2152,20 @@ function renderMonthly() {
   setText('monthly-expense', fmtNT(exp));
   const bEl = document.getElementById('monthly-balance');
   bEl.textContent = fmtNT(bal); bEl.style.color = bal>=0?'#4ade80':'#f87171';
+
+  // Income source overview
+  const incomeByCat = groupSum(txs.filter(t=>t.type==='收入'));
+  const incomeSorted = Object.entries(incomeByCat).sort((a,b)=>b[1]-a[1]);
+  const maxInc = incomeSorted[0]?.[1] || 1;
+  document.getElementById('income-breakdown').innerHTML = incomeSorted.length
+    ? incomeSorted.map(([c,v]) => `
+      <div style="margin-bottom:10px;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:3px; font-size:13px;">
+          <span>${c}</span><span style="font-weight:800;">${fmtNT(v)}</span>
+        </div>
+        <div class="progress-bar"><div style="height:5px; border-radius:3px; width:${(v/maxInc)*100}%;"></div></div>
+      </div>`).join('')
+    : '<div style="color:#49769F; text-align:center; padding:16px 0; font-size:13px;">本月無收入記錄</div>';
 
   // Category breakdown (expenses only for selected month)
   const byCat = groupSum(txs.filter(t=>t.type==='支出'));
@@ -2012,7 +2351,7 @@ function showPage(page) {
     const next = document.getElementById(`page-${page}`);
     next.classList.add('active');
     tab?.classList.add('active');
-    document.getElementById('fab').style.display = page==='records' ? 'flex' : 'none';
+    document.getElementById('fab').style.display = 'none';
     if (page === 'records') buildRecordFilter();
     window.scrollTo(0, 0);
   }, cur ? 140 : 0);
@@ -2023,11 +2362,11 @@ function openModal(id) { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 function backdropClose(e, id) { if (e.target.id===id) closeModal(id); }
 
-function openTransactionModal() {
+function openTransactionModal(type='支出') {
   document.getElementById('tx-amount').value = '';
   document.getElementById('tx-note').value   = '';
   document.getElementById('tx-date').value   = new Date().toISOString().split('T')[0];
-  selectTxType('支出');
+  selectTxType(type);
   openModal('transaction-modal');
 }
 
@@ -2166,8 +2505,7 @@ function openAddPosition(id) {
   const inv = state.investments.find(i => i.id == id);
   if (!inv) return;
   document.getElementById('add-pos-name').textContent = inv.name + '（' + inv.ticker + '）';
-  const curPrice = state.prices[inv.ticker] ?? inv.avg_price;
-  document.getElementById('add-pos-price').value = curPrice ? curPrice.toFixed(2) : '';
+  document.getElementById('add-pos-price').value = '';
   document.getElementById('add-pos-qty').value = '';
   document.getElementById('add-pos-hint').style.display = 'none';
   openModal('add-pos-modal');
@@ -2213,15 +2551,12 @@ function openClosePosition(id) {
   const maxQty = inv.quantity;
   document.getElementById('close-pos-info').textContent  = `${inv.name} (${inv.ticker}) — 持有 ${maxQty} ${isTW?'張':'股'}`;
   const hintEl = document.getElementById('close-price-hint');
-  if (hintEl) hintEl.textContent = state.prices[inv.ticker] ? `（現價 ${isTW?'NT$':'$'}${state.prices[inv.ticker].toFixed(2)} 已自動帶入）` : '（需手動輸入）';
+  if (hintEl) hintEl.textContent = '（請填銀行實際成交價）';
   document.getElementById('close-pos-qty').max           = maxQty;
   document.getElementById('close-pos-qty').placeholder   = `最多 ${maxQty} ${isTW?'張':'股'}`;
   document.getElementById('close-pos-qty').value         = '';
-  // Auto-fill current market price if available
-  const autoPrice = state.prices[inv.ticker] || '';
-  document.getElementById('close-pos-price').value       = autoPrice ? (inv.market==='台股' ? autoPrice.toFixed(2) : autoPrice.toFixed(2)) : '';
+  document.getElementById('close-pos-price').value       = '';
   document.getElementById('close-pos-preview').style.display = 'none';
-  if (autoPrice) calcClosePnl(); // trigger preview if price is known
   document.getElementById('cpv-gross').textContent = '—';
   document.getElementById('cpv-cost').textContent  = '—';
   document.getElementById('cpv-pnl').textContent   = '—';
