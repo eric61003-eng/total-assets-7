@@ -749,7 +749,7 @@
     text-shadow:0 2px 8px rgba(0,0,0,0.82), 0 0 16px rgba(254,142,23,0.16) !important;
   }
 
-  /* v15 graphite / mint / amber refresh: no deep-blue base */
+  /* v16 solid-color refresh: no gradients */
   :root {
     --bg:#171614;
     --card:rgba(37,35,30,0.64);
@@ -763,19 +763,12 @@
     --yellow:#F4BE6B;
   }
   body {
-    background:#171614;
-    background-image:
-      radial-gradient(circle at 10% 0%, rgba(244,190,107,0.46) 0%, rgba(244,121,13,0.16) 28%, transparent 54%),
-      radial-gradient(circle at 96% 12%, rgba(60,154,158,0.44) 0%, rgba(192,222,223,0.18) 30%, transparent 56%),
-      radial-gradient(circle at 8% 94%, rgba(254,142,23,0.18) 0%, transparent 42%),
-      linear-gradient(135deg,#26231d 0%,#151412 48%,#20302e 100%) !important;
+    background:#1f1d1a !important;
+    background-image:none !important;
   }
   body::before {
-    opacity:.74;
-    background-image:
-      radial-gradient(circle, rgba(255,248,234,0.16) 1px, transparent 1px),
-      linear-gradient(115deg, transparent 0 22%, rgba(244,190,107,0.09) 22.15% 22.35%, transparent 22.6% 100%) !important;
-    background-size:20px 20px, 230px 230px !important;
+    opacity:0 !important;
+    background-image:none !important;
   }
   header {
     background:rgba(22,21,18,0.86) !important;
@@ -788,26 +781,22 @@
   .card,
   .gradient-card,
   .modal-sheet {
-    background:
-      linear-gradient(145deg, rgba(255,248,234,0.18), rgba(255,255,255,0.055) 35%, rgba(0,0,0,0.16)),
-      rgba(36,34,30,0.70) !important;
+    background:rgba(41,39,35,0.78) !important;
     border-color:rgba(244,190,107,0.30) !important;
     box-shadow:inset 0 1px 0 rgba(255,255,255,0.18), 0 18px 45px rgba(0,0,0,0.30) !important;
   }
   .gradient-card::before {
-    background:
-      radial-gradient(circle at 12% 8%, rgba(244,190,107,0.26), transparent 36%),
-      radial-gradient(circle at 94% 2%, rgba(60,154,158,0.24), transparent 42%) !important;
+    background:rgba(244,190,107,0.08) !important;
   }
   .btn-primary,
   #itab-holdings,
   .record-action.expense {
-    background:linear-gradient(135deg,#F4BE6B,#F4790D) !important;
+    background:#F4BE6B !important;
     color:#171614 !important;
   }
   .record-action.income,
   .invest-toolbar .alert-btn {
-    background:linear-gradient(135deg,#C0DEDF,#3C9A9E) !important;
+    background:#C0DEDF !important;
     color:#102422 !important;
   }
   input,
@@ -819,6 +808,39 @@
   }
   .nav-tab.active {
     color:#F4BE6B !important;
+  }
+  .nav-tab.active::before,
+  .progress-fill,
+  .progress-bar div,
+  #savings-bar {
+    background:#F4BE6B !important;
+  }
+  button[style*="linear-gradient"],
+  div[style*="linear-gradient"],
+  .app-shell [style*="linear-gradient"] {
+    background:#3f3b34 !important;
+  }
+  .btn-primary,
+  button.btn-primary,
+  .record-action.expense,
+  #itab-holdings,
+  #itab-realized[style*="linear-gradient"] {
+    background:#F4BE6B !important;
+    color:#171614 !important;
+  }
+  .record-action.income,
+  .invest-toolbar .alert-btn {
+    background:#C0DEDF !important;
+    color:#102422 !important;
+  }
+  .app-header-inner > div > div:first-child {
+    background:#C0DEDF !important;
+  }
+  .nav-tab.active::before,
+  .progress-fill,
+  .progress-bar div,
+  #savings-bar {
+    background:#F4BE6B !important;
   }
   @media (max-width:420px) {
     #grand-total { font-size:38px !important; }
@@ -1010,7 +1032,7 @@ const CONFIG = {
   <button onclick="exportToExcel()" style="width:100%; background:linear-gradient(135deg,#166534,#14532d); border:1px solid rgba(74,222,128,0.3); color:#4ade80; padding:13px; border-radius:14px; cursor:pointer; font-size:14px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:8px;">
     📊 匯出 Excel 報表
   </button>
-  <div style="text-align:center; color:#315d84; font-size:10px; margin:12px 0 2px;">版面 v15 · 石墨持倉調整版</div>
+  <div style="text-align:center; color:#315d84; font-size:10px; margin:12px 0 2px;">版面 v16 · 單色毛玻璃版</div>
 </div>
 
 <!-- PAGE 2: 投資 -->
