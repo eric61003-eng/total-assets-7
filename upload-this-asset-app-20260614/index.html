@@ -748,6 +748,78 @@
     color:#fff8e5 !important;
     text-shadow:0 2px 8px rgba(0,0,0,0.82), 0 0 16px rgba(254,142,23,0.16) !important;
   }
+
+  /* v15 graphite / mint / amber refresh: no deep-blue base */
+  :root {
+    --bg:#171614;
+    --card:rgba(37,35,30,0.64);
+    --border:rgba(244,190,107,0.26);
+    --accent:#3C9A9E;
+    --accent2:#F4790D;
+    --mid:#C0DEDF;
+    --pale:#FFF8EA;
+    --text:#fffdf6;
+    --muted:#d8d0bf;
+    --yellow:#F4BE6B;
+  }
+  body {
+    background:#171614;
+    background-image:
+      radial-gradient(circle at 10% 0%, rgba(244,190,107,0.46) 0%, rgba(244,121,13,0.16) 28%, transparent 54%),
+      radial-gradient(circle at 96% 12%, rgba(60,154,158,0.44) 0%, rgba(192,222,223,0.18) 30%, transparent 56%),
+      radial-gradient(circle at 8% 94%, rgba(254,142,23,0.18) 0%, transparent 42%),
+      linear-gradient(135deg,#26231d 0%,#151412 48%,#20302e 100%) !important;
+  }
+  body::before {
+    opacity:.74;
+    background-image:
+      radial-gradient(circle, rgba(255,248,234,0.16) 1px, transparent 1px),
+      linear-gradient(115deg, transparent 0 22%, rgba(244,190,107,0.09) 22.15% 22.35%, transparent 22.6% 100%) !important;
+    background-size:20px 20px, 230px 230px !important;
+  }
+  header {
+    background:rgba(22,21,18,0.86) !important;
+    border-bottom:1px solid rgba(244,190,107,0.18) !important;
+  }
+  .bottom-nav {
+    background:rgba(22,21,18,0.90) !important;
+    border-top:1px solid rgba(244,190,107,0.18) !important;
+  }
+  .card,
+  .gradient-card,
+  .modal-sheet {
+    background:
+      linear-gradient(145deg, rgba(255,248,234,0.18), rgba(255,255,255,0.055) 35%, rgba(0,0,0,0.16)),
+      rgba(36,34,30,0.70) !important;
+    border-color:rgba(244,190,107,0.30) !important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.18), 0 18px 45px rgba(0,0,0,0.30) !important;
+  }
+  .gradient-card::before {
+    background:
+      radial-gradient(circle at 12% 8%, rgba(244,190,107,0.26), transparent 36%),
+      radial-gradient(circle at 94% 2%, rgba(60,154,158,0.24), transparent 42%) !important;
+  }
+  .btn-primary,
+  #itab-holdings,
+  .record-action.expense {
+    background:linear-gradient(135deg,#F4BE6B,#F4790D) !important;
+    color:#171614 !important;
+  }
+  .record-action.income,
+  .invest-toolbar .alert-btn {
+    background:linear-gradient(135deg,#C0DEDF,#3C9A9E) !important;
+    color:#102422 !important;
+  }
+  input,
+  select,
+  textarea {
+    background:rgba(18,17,15,0.66) !important;
+    border-color:rgba(244,190,107,0.30) !important;
+    color:#fffdf6 !important;
+  }
+  .nav-tab.active {
+    color:#F4BE6B !important;
+  }
   @media (max-width:420px) {
     #grand-total { font-size:38px !important; }
     #portfolio-total { font-size:28px !important; }
@@ -938,7 +1010,7 @@ const CONFIG = {
   <button onclick="exportToExcel()" style="width:100%; background:linear-gradient(135deg,#166534,#14532d); border:1px solid rgba(74,222,128,0.3); color:#4ade80; padding:13px; border-radius:14px; cursor:pointer; font-size:14px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:8px;">
     📊 匯出 Excel 報表
   </button>
-  <div style="text-align:center; color:#315d84; font-size:10px; margin:12px 0 2px;">版面 v14 · 收入總覽提醒版</div>
+  <div style="text-align:center; color:#315d84; font-size:10px; margin:12px 0 2px;">版面 v15 · 石墨持倉調整版</div>
 </div>
 
 <!-- PAGE 2: 投資 -->
@@ -980,7 +1052,7 @@ const CONFIG = {
 
     <div class="invest-toolbar">
       <button class="alert-btn" onclick="openExitAlertModal()">設定出倉提醒</button>
-      <button onclick="openModal('invest-modal')">新增持倉</button>
+      <button onclick="openHoldingAdjustModal()">持倉調整</button>
     </div>
 
     <!-- 台股 vs 美股 損益卡 -->
@@ -1017,8 +1089,8 @@ const CONFIG = {
     <div style="font-size:13px; font-weight:700; color:#49769F; margin-bottom:8px; letter-spacing:1px;">🇺🇸 美股</div>
     <div id="us-stocks-list" style="margin-bottom:10px;"></div>
 
-    <button onclick="openModal('invest-modal')" style="background:none; border:1.5px dashed rgba(125,189,232,0.2); color:#49769F; padding:14px; border-radius:14px; width:100%; cursor:pointer; font-size:14px; margin-bottom:20px;">
-      + 新增持倉
+    <button onclick="openHoldingAdjustModal()" style="background:none; border:1.5px dashed rgba(125,189,232,0.2); color:#49769F; padding:14px; border-radius:14px; width:100%; cursor:pointer; font-size:14px; margin-bottom:20px;">
+      + 持倉調整
     </button>
   </div>
 
@@ -1221,7 +1293,7 @@ const CONFIG = {
 <div id="invest-modal" class="modal-overlay" onclick="backdropClose(event,'invest-modal')">
   <div class="modal-sheet">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-      <div style="font-size:18px; font-weight:700;">新增持倉</div>
+      <div style="font-size:18px; font-weight:700;">新增全新標的</div>
       <button onclick="closeModal('invest-modal')" style="background:rgba(10,65,116,0.7); border:1px solid rgba(125,189,232,0.15); color:#BDD8E9; width:32px; height:32px; border-radius:8px; cursor:pointer; font-size:16px; line-height:1;">✕</button>
     </div>
 
@@ -1257,6 +1329,53 @@ const CONFIG = {
         <input type="number" id="inv-multiplier" value="1000" inputmode="decimal">
       </div>
       <button onclick="saveInvestment()" class="btn-primary" style="margin-top:4px;">儲存</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================
+     MODAL: 持倉調整
+======================================================== -->
+<div id="holding-adjust-modal" class="modal-overlay" onclick="backdropClose(event,'holding-adjust-modal')">
+  <div class="modal-sheet">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+      <div style="font-size:18px; font-weight:700;">持倉調整</div>
+      <button onclick="closeModal('holding-adjust-modal')" style="background:rgba(10,65,116,0.7); border:1px solid rgba(125,189,232,0.15); color:#BDD8E9; width:32px; height:32px; border-radius:8px; cursor:pointer; font-size:16px; line-height:1;">✕</button>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:12px;">
+      <div>
+        <label style="font-size:12px; color:#6EA2B3; display:block; margin-bottom:5px;">市場</label>
+        <select id="adj-market" onchange="syncHoldingAdjustForm()">
+          <option value="台股">🇹🇼 台股</option>
+          <option value="美股">🇺🇸 美股</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:12px; color:#6EA2B3; display:block; margin-bottom:5px;">調整方式</label>
+        <select id="adj-action" onchange="syncHoldingAdjustForm()">
+          <option value="buy">加倉 / 買進</option>
+          <option value="sell">出倉 / 賣出</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:12px; color:#6EA2B3; display:block; margin-bottom:5px;">持股</label>
+        <select id="adj-investment" onchange="calcHoldingAdjustPreview()"></select>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div>
+          <label id="adj-price-label" style="font-size:12px; color:#6EA2B3; display:block; margin-bottom:5px;">實際成交價</label>
+          <input type="number" id="adj-price" placeholder="銀行實際成交價" inputmode="decimal" oninput="calcHoldingAdjustPreview()">
+        </div>
+        <div>
+          <label id="adj-qty-label" style="font-size:12px; color:#6EA2B3; display:block; margin-bottom:5px;">成交數量</label>
+          <input type="number" id="adj-qty" placeholder="張 / 股" inputmode="decimal" step="0.001" oninput="calcHoldingAdjustPreview()">
+        </div>
+      </div>
+      <div id="adj-preview" style="background:#001A36; border-radius:12px; padding:12px; font-size:12px; color:#BDD8E9;">先選市場與持股</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <button id="adj-save-btn" onclick="saveHoldingAdjust()" class="btn-primary">儲存調整</button>
+        <button onclick="closeModal('holding-adjust-modal'); openModal('invest-modal');" style="border:1px solid rgba(192,222,223,0.28); background:rgba(192,222,223,0.10); color:#e7fbff; border-radius:12px; font-weight:800; cursor:pointer;">新增全新標的</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1956,7 +2075,7 @@ function getExitAlertInfo(inv, price, hasPrice) {
 
 function openExitAlertModal(id) {
   const options = state.investments.map(inv => `<option value="${inv.id}">${inv.name}（${inv.ticker}）</option>`).join('');
-  if (!options) { toast('請先新增持倉'); return; }
+  if (!options) { toast('請先新增全新標的'); return; }
   const sel = document.getElementById('exit-alert-investment');
   sel.innerHTML = options;
   sel.value = id || state.investments[0].id;
@@ -2144,7 +2263,9 @@ function selectMonth(m) {
 }
 
 function renderMonthly() {
-  const txs = state.transactions.filter(t => new Date(t.date).getMonth()+1 === state.selMonth);
+  const txs = state.transactions
+    .filter(t => t.category !== '投資收入' && t.category !== '投資轉入')
+    .filter(t => new Date(t.date).getMonth()+1 === state.selMonth);
   const inc = sum(txs.filter(t=>t.type==='收入'), 'amount');
   const exp = sum(txs.filter(t=>t.type==='支出'), 'amount');
   const bal = inc - exp;
@@ -2541,6 +2662,132 @@ async function saveAddPosition() {
   closeModal('add-pos-modal');
   toast('✓ 加倉完成，均價已更新');
   await refreshData();
+}
+
+function openHoldingAdjustModal() {
+  const marketEl = document.getElementById('adj-market');
+  const hasTW = state.investments.some(i => i.market === '台股');
+  const hasUS = state.investments.some(i => i.market === '美股');
+  marketEl.value = hasTW ? '台股' : (hasUS ? '美股' : '台股');
+  document.getElementById('adj-action').value = 'buy';
+  document.getElementById('adj-price').value = '';
+  document.getElementById('adj-qty').value = '';
+  syncHoldingAdjustForm();
+  openModal('holding-adjust-modal');
+}
+
+function syncHoldingAdjustForm() {
+  const market = document.getElementById('adj-market').value;
+  const action = document.getElementById('adj-action').value;
+  const list = state.investments.filter(i => i.market === market);
+  const sel = document.getElementById('adj-investment');
+  sel.innerHTML = list.length
+    ? list.map(inv => `<option value="${inv.id}">${inv.name}（${inv.ticker}，${inv.quantity}${market==='台股'?'張':'股'}）</option>`).join('')
+    : '<option value="">目前沒有這個市場的持股</option>';
+  document.getElementById('adj-price-label').textContent = action === 'buy' ? '買進成交均價' : '賣出成交價';
+  document.getElementById('adj-qty-label').textContent = action === 'buy' ? '買進數量' : '賣出數量';
+  document.getElementById('adj-price').placeholder = action === 'buy' ? '銀行買進成交價' : '銀行賣出成交價';
+  document.getElementById('adj-qty').placeholder = market === '台股' ? '張數' : '股數';
+  document.getElementById('adj-save-btn').disabled = !list.length;
+  document.getElementById('adj-save-btn').style.opacity = list.length ? '1' : '.45';
+  calcHoldingAdjustPreview();
+}
+
+function calcHoldingAdjustPreview() {
+  const id = document.getElementById('adj-investment').value;
+  const inv = state.investments.find(i => i.id == id);
+  const preview = document.getElementById('adj-preview');
+  if (!inv) {
+    preview.textContent = '這個市場目前沒有持股，可以按「新增全新標的」。';
+    return;
+  }
+  const action = document.getElementById('adj-action').value;
+  const qty = parseFloat(document.getElementById('adj-qty').value) || 0;
+  const price = parseFloat(document.getElementById('adj-price').value) || 0;
+  const isTW = inv.market === '台股';
+  const mult = isTW ? (inv.lot_multiplier ?? 1000) : 1;
+  const rate = isTW ? 1 : state.usdRate;
+  if (!qty || !price) {
+    preview.innerHTML = `<div style="font-weight:800; margin-bottom:6px;">${inv.name}</div><div>目前持有 ${inv.quantity} ${isTW?'張':'股'}，均價 ${isTW?'NT$':'$'} ${Number(inv.avg_price).toFixed(2)}</div>`;
+    return;
+  }
+  if (action === 'buy') {
+    const newQty = inv.quantity + qty;
+    const newAvg = (inv.quantity * inv.avg_price + qty * price) / newQty;
+    preview.innerHTML = `<div style="font-weight:800; margin-bottom:6px;">加倉預覽</div><div>數量：${inv.quantity} + ${qty} = ${newQty} ${isTW?'張':'股'}</div><div>新均價：約 ${isTW?'NT$':'$'} ${newAvg.toFixed(2)}</div>`;
+  } else {
+    const gross = price * qty * mult * rate;
+    const cost = inv.avg_price * qty * mult * rate;
+    const pnl = gross - cost;
+    preview.innerHTML = `<div style="font-weight:800; margin-bottom:6px;">出倉預覽</div><div>出倉後剩餘：${Math.max(inv.quantity - qty, 0)} ${isTW?'張':'股'}</div><div>本次損益：<span style="font-weight:900; color:${pnl>=0?'#4ade80':'#f87171'};">${pnl>=0?'+':''}${fmtNT(pnl)}</span></div>`;
+  }
+}
+
+async function saveHoldingAdjust() {
+  const id = document.getElementById('adj-investment').value;
+  const inv = state.investments.find(i => i.id == id);
+  if (!inv) { toast('請先選擇持股'); return; }
+  const action = document.getElementById('adj-action').value;
+  const qty = parseFloat(document.getElementById('adj-qty').value);
+  const price = parseFloat(document.getElementById('adj-price').value);
+  if (!qty || !price || qty <= 0 || price <= 0) { toast('請輸入成交價與數量'); return; }
+
+  const isTW = inv.market === '台股';
+  const mult = isTW ? (inv.lot_multiplier ?? 1000) : 1;
+  const rate = isTW ? 1 : state.usdRate;
+
+  if (action === 'buy') {
+    const newQty = inv.quantity + qty;
+    const newAvg = (inv.quantity * inv.avg_price + qty * price) / newQty;
+    if (sb) {
+      const { error } = await sb.from('investments').update({ quantity: newQty, avg_price: parseFloat(newAvg.toFixed(4)) }).eq('id', inv.id);
+      if (error) { toast('儲存失敗: ' + error.message); return; }
+    } else {
+      inv.quantity = newQty;
+      inv.avg_price = parseFloat(newAvg.toFixed(4));
+    }
+    closeModal('holding-adjust-modal');
+    toast('✓ 加倉完成');
+    await refreshData();
+    return;
+  }
+
+  if (qty > inv.quantity) { toast('出倉數量不能超過持有數量'); return; }
+  const gross = price * qty * mult * rate;
+  const cost = inv.avg_price * qty * mult * rate;
+  const pnl = gross - cost;
+  const today = new Date().toISOString().slice(0,10);
+  const newQty = inv.quantity - qty;
+
+  if (sb) {
+    const txType = pnl >= 0 ? '收入' : '支出';
+    const r1 = await sb.from('transactions').insert({
+      date: today,
+      type: txType,
+      category: '投資收入',
+      amount: Math.abs(Math.round(pnl)),
+      note: `${inv.ticker} 出倉 ${qty}${isTW?'張':'股'} @${price}`
+    });
+    if (r1.error) { toast('損益紀錄失敗: ' + r1.error.message); return; }
+    const r2 = newQty <= 0
+      ? await sb.from('investments').delete().eq('id', inv.id)
+      : await sb.from('investments').update({ quantity: newQty }).eq('id', inv.id);
+    if (r2.error) { toast('持倉更新失敗: ' + r2.error.message); return; }
+  } else {
+    state.transactions.unshift({
+      id: Date.now().toString(),
+      date: today,
+      type: pnl >= 0 ? '收入' : '支出',
+      category: '投資收入',
+      amount: Math.abs(Math.round(pnl)),
+      note: `${inv.ticker} 出倉 ${qty}${isTW?'張':'股'} @${price}`
+    });
+    inv.quantity = newQty;
+    if (newQty <= 0) state.investments = state.investments.filter(i => i.id != inv.id);
+  }
+  closeModal('holding-adjust-modal');
+  await refreshData();
+  alert(`已出倉，${pnl>=0?'獲利':'虧損'} ${fmtNT(Math.abs(pnl))}`);
 }
 
 function openClosePosition(id) {
