@@ -635,7 +635,7 @@
   .record-action.income { background:linear-gradient(135deg,#C0DEDF,#3C9A9E); }
   .invest-toolbar {
     display:grid;
-    grid-template-columns:1fr 1fr;
+    grid-template-columns:1fr 1fr 1fr;
     gap:10px;
     margin-bottom:14px;
   }
@@ -1206,7 +1206,7 @@ const CONFIG = {
   <!-- 總資產大標 -->
   <div class="gradient-card" style="margin-bottom:12px; padding:24px 22px 20px;">
     <!-- 3D Floating Money Bag -->
-    <div class="bag-wrap" onclick="(function(el){const r=el.getBoundingClientRect();window.burstParticles&&window.burstParticles(r.left+r.width/2,r.top+r.height/2,38);})(this)" style="cursor:pointer;">
+    <div class="bag-wrap" style="cursor:default;">
       <div class="bag-inner">
         <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" width="76" height="76">
           <defs>
@@ -1335,7 +1335,7 @@ const CONFIG = {
   <button onclick="exportToExcel()" style="width:100%; background:linear-gradient(135deg,#166534,#14532d); border:1px solid rgba(74,222,128,0.3); color:#4ade80; padding:13px; border-radius:14px; cursor:pointer; font-size:14px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:8px;">
     📊 匯出 Excel 報表
   </button>
-  <div style="text-align:center; color:#315d84; font-size:10px; margin:12px 0 2px;">版面 v21 · 投資卡片強化版</div>
+  <div style="text-align:center; color:#315d84; font-size:10px; margin:12px 0 2px;">版面 v22 · 投資入口提醒版</div>
 </div>
 
 <!-- PAGE 2: 投資 -->
@@ -1376,6 +1376,7 @@ const CONFIG = {
   </div>
 
     <div class="invest-toolbar">
+      <button onclick="openModal('invest-modal')">新增持倉</button>
       <button class="alert-btn" onclick="openExitAlertModal()">設定出倉提醒</button>
       <button onclick="openHoldingAdjustModal()">持倉調整</button>
     </div>
@@ -1945,6 +1946,7 @@ const PRICE_REFRESH_MS = 5 * 60 * 1000;
 const PRICE_TIMEOUT_MS = 3000;
 let priceRefreshTimer = null;
 let priceFetchRunning = false;
+let lastExitAlertHits = {};
 
 function yahooUrl(path, query='') {
   return `https://query1.finance.yahoo.com/${path}${query ? '?' + query : ''}`;
@@ -2089,7 +2091,7 @@ async function fetchPrice(ticker, market) {
 
 function setManualPrice(ticker) {
   const p = parseFloat(prompt(`請輸入 ${ticker} 的現在價格：`));
-  if (p > 0) { state.prices[ticker] = p; renderInvestments(); renderOverview(); }
+  if (p > 0) { state.prices[ticker] = p; renderInvestments(); renderOverview(); checkExitAlerts(true); }
 }
 
 async function fetchAllPrices() {
@@ -2139,6 +2141,7 @@ async function fetchAllPrices() {
   document.getElementById('price-updated').textContent = `股價更新於 ${new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'})} · 匯率 ${state.usdRate.toFixed(1)}${noPriceNote}`;
   renderInvestments();
   renderOverview();
+  checkExitAlerts(true);
   } catch (e) {
     document.getElementById('price-updated').textContent = '股價暫時抓不到，請稍後再試';
   } finally {
@@ -2149,6 +2152,22 @@ async function fetchAllPrices() {
 async function refreshPrices() {
   state.prices = {};
   await fetchAllPrices();
+}
+
+function checkExitAlerts(showToast=true) {
+  const hits = [];
+  state.investments.forEach(inv => {
+    const price = state.prices[inv.ticker];
+    const info = getExitAlertInfo(inv, price || inv.avg_price, !!price);
+    if (info?.hit) hits.push({ inv, info });
+  });
+  if (!hits.length) return;
+  const signature = hits.map(h => `${h.inv.id}:${h.info.text}`).join('|');
+  if (lastExitAlertHits.signature === signature) return;
+  lastExitAlertHits.signature = signature;
+  if (showToast) toast(`出倉提醒：${hits.map(h => h.inv.name).join('、')} 已達標`);
+  const message = hits.map(h => `${h.inv.name}：${h.info.text}`).join('\n');
+  setTimeout(() => alert(message), 150);
 }
 function startAutoPriceRefresh() {
   clearInterval(priceRefreshTimer);
@@ -2786,23 +2805,9 @@ function showPage(page) {
   const cur = document.querySelector('.page.active');
   if (cur && cur.id === `page-${page}`) return;
 
-  // Fire particles from the nav tab icon
   const idx = {overview:0, invest:1, monthly:2, records:3}[page];
   const tabs = document.querySelectorAll('.nav-tab');
   const tab = tabs[idx];
-  if (tab) {
-    const r = tab.getBoundingClientRect();
-    const cx = r.left + r.width/2;
-    const cy = r.top + r.height/2;
-    window.burstParticles(cx, cy, 20);
-    // Ripple ring on nav icon
-    const ripple = document.createElement('div');
-    ripple.style.cssText = `position:fixed;left:${cx}px;top:${cy}px;width:4px;height:4px;
-      border-radius:50%;border:2px solid rgba(240,192,64,0.8);transform:translate(-50%,-50%);
-      pointer-events:none;z-index:997;animation:rippleOut 0.5s ease-out forwards;`;
-    document.body.appendChild(ripple);
-    setTimeout(()=>ripple.remove(), 520);
-  }
 
   if (cur) { cur.classList.add('leaving'); }
 
