@@ -317,34 +317,36 @@
     box-shadow:0 4px 24px rgba(0,0,0,0.4); backdrop-filter:blur(10px);
   }
 
-  /* ── v8 黑白毛玻璃主題 ─────────────────────────────────── */
+  /* ── v11 Atlas 藍黑科技光暈主題 ─────────────────────────── */
   :root {
-    --bg:#050505;
-    --card:rgba(255,255,255,0.075);
-    --border:rgba(255,255,255,0.16);
-    --accent:#ffffff;
-    --accent2:#d8d8d8;
-    --mid:#9a9a9a;
-    --pale:#f2f2f2;
-    --text:#f7f7f7;
-    --muted:#9b9b9b;
-    --green:#eeeeee;
-    --red:#bdbdbd;
-    --yellow:#ffffff;
+    --bg:#00111f;
+    --card:rgba(36,118,156,0.16);
+    --border:rgba(157,226,255,0.28);
+    --accent:#bfefff;
+    --accent2:#74c8ef;
+    --mid:#7aa8bb;
+    --pale:#eafaff;
+    --text:#f5fbff;
+    --muted:#91b8c7;
+    --green:#c9f7ff;
+    --red:#91aebc;
+    --yellow:#eaf9ff;
   }
   body {
-    background:#030303;
+    background:#00111f;
     background-image:
-      radial-gradient(ellipse at 18% -8%, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.08) 28%, transparent 55%),
-      radial-gradient(ellipse at 95% 10%, rgba(255,255,255,0.13) 0%, transparent 45%),
-      radial-gradient(ellipse at 50% 105%, rgba(255,255,255,0.18) 0%, transparent 48%),
-      linear-gradient(135deg,#000 0%,#0b0b0d 45%,#000 100%);
+      radial-gradient(ellipse at 50% 3%, rgba(219,249,255,0.76) 0%, rgba(125,209,242,0.36) 22%, rgba(16,80,118,0.22) 38%, transparent 62%),
+      radial-gradient(ellipse at 13% 28%, rgba(178,235,255,0.42) 0%, rgba(63,151,196,0.18) 32%, transparent 57%),
+      radial-gradient(ellipse at 93% 16%, rgba(155,228,255,0.32) 0%, transparent 45%),
+      linear-gradient(180deg,#061926 0%,#001629 38%,#00111f 100%);
   }
   body::before {
     background:
-      radial-gradient(circle at 50% 0%, rgba(255,255,255,0.08), transparent 38%),
-      repeating-linear-gradient(115deg, rgba(255,255,255,0.055) 0 1px, transparent 1px 92px);
-    opacity:.75;
+      radial-gradient(circle, rgba(196,240,255,0.13) 1px, transparent 1.5px),
+      linear-gradient(110deg, transparent 0 18%, rgba(177,229,255,0.12) 18.2%, transparent 18.6% 52%, rgba(177,229,255,0.08) 52.2%, transparent 52.8%),
+      linear-gradient(180deg, rgba(255,255,255,0.04), transparent 32%);
+    background-size:18px 18px, 210px 100%, 100% 100%;
+    opacity:.82;
   }
   body::after {
     content:'';
@@ -353,42 +355,48 @@
     z-index:0;
     pointer-events:none;
     background:
-      linear-gradient(115deg, transparent 8%, rgba(255,255,255,0.12) 18%, transparent 32%),
-      linear-gradient(295deg, transparent 46%, rgba(255,255,255,0.09) 58%, transparent 71%);
-    filter:blur(28px);
-    opacity:.8;
+      radial-gradient(ellipse at 46% 18%, rgba(234,252,255,0.42), transparent 31%),
+      radial-gradient(ellipse at 11% 88%, rgba(196,242,255,0.28), transparent 36%),
+      linear-gradient(180deg, transparent 0 36%, rgba(2,32,53,0.74) 54%, transparent 78%);
+    filter:blur(24px);
+    opacity:.78;
   }
   header,
   nav.bottom-nav {
-    background:rgba(0,0,0,0.72) !important;
-    border-color:rgba(255,255,255,0.12) !important;
-    box-shadow:0 16px 40px rgba(0,0,0,0.35);
+    background:rgba(0,18,32,0.72) !important;
+    border-color:rgba(191,239,255,0.2) !important;
+    box-shadow:0 18px 48px rgba(0,12,24,0.45);
   }
   .card,
   .gradient-card,
   .modal-sheet {
-    background:linear-gradient(145deg, rgba(255,255,255,0.13), rgba(255,255,255,0.045)) !important;
-    border:1px solid rgba(255,255,255,0.18) !important;
+    background:
+      linear-gradient(180deg, rgba(164,225,249,0.24), rgba(9,50,78,0.28) 46%, rgba(0,20,36,0.58)),
+      radial-gradient(ellipse at 50% 0%, rgba(240,253,255,0.18), transparent 45%) !important;
+    border:1px solid rgba(181,235,255,0.34) !important;
     box-shadow:
-      0 18px 55px rgba(0,0,0,0.48),
-      inset 0 1px 0 rgba(255,255,255,0.16),
-      inset 0 -1px 0 rgba(255,255,255,0.04) !important;
-    backdrop-filter:blur(26px) saturate(1.25) !important;
-    -webkit-backdrop-filter:blur(26px) saturate(1.25) !important;
+      0 22px 70px rgba(0,13,28,0.54),
+      inset 0 1px 0 rgba(237,253,255,0.28),
+      inset 0 -1px 0 rgba(90,188,229,0.12),
+      0 0 0 1px rgba(66,157,204,0.08) !important;
+    backdrop-filter:blur(24px) saturate(1.35) !important;
+    -webkit-backdrop-filter:blur(24px) saturate(1.35) !important;
   }
+  .card { border-radius:24px !important; }
+  .gradient-card { border-radius:28px !important; }
   .gradient-card::before {
-    background:radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 62%) !important;
+    background:radial-gradient(circle, rgba(232,251,255,0.42) 0%, rgba(138,219,252,0.16) 34%, transparent 70%) !important;
   }
   .gradient-card::after {
-    background:radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 72%) !important;
+    background:linear-gradient(180deg, rgba(238,253,255,0.18), transparent 48%) !important;
   }
   .btn-primary,
   button[style*="linear-gradient(135deg,#7BBDE8"],
   button[style*="linear-gradient(135deg,#166534"] {
-    background:linear-gradient(135deg,#f8f8f8,#b8b8b8) !important;
-    color:#050505 !important;
-    border:1px solid rgba(255,255,255,0.34) !important;
-    box-shadow:0 10px 32px rgba(255,255,255,0.12) !important;
+    background:linear-gradient(135deg,#effcff,#94dcff 54%,#3a91c5) !important;
+    color:#011827 !important;
+    border:1px solid rgba(236,253,255,0.65) !important;
+    box-shadow:0 12px 34px rgba(120,211,255,0.22), inset 0 1px 0 rgba(255,255,255,0.55) !important;
   }
   .btn-ghost,
   .btn-edit,
@@ -396,39 +404,39 @@
   button[style*="background:rgba(10,65,116"],
   button[style*="background:rgba(56,189,248"],
   button[style*="background:none"] {
-    background:rgba(255,255,255,0.08) !important;
-    color:#f5f5f5 !important;
-    border-color:rgba(255,255,255,0.18) !important;
+    background:rgba(151,221,255,0.12) !important;
+    color:#e9fbff !important;
+    border-color:rgba(185,236,255,0.28) !important;
   }
   .btn-danger {
-    background:rgba(255,255,255,0.08) !important;
-    color:#dedede !important;
-    border-color:rgba(255,255,255,0.18) !important;
+    background:rgba(154,205,226,0.08) !important;
+    color:#d8edf6 !important;
+    border-color:rgba(185,236,255,0.2) !important;
   }
   input[type=text], input[type=number], input[type=date], select, textarea {
-    background:rgba(0,0,0,0.46) !important;
-    border-color:rgba(255,255,255,0.2) !important;
-    color:#fff !important;
+    background:rgba(0,20,36,0.7) !important;
+    border-color:rgba(188,238,255,0.28) !important;
+    color:#f3fdff !important;
   }
   .progress-bar,
   [style*="background:rgba(0,18,42"],
   [style*="background:rgba(125,189,232"],
   [style*="background:rgba(74,222,128"] {
-    background:rgba(255,255,255,0.075) !important;
-    border-color:rgba(255,255,255,0.13) !important;
+    background:rgba(163,224,251,0.12) !important;
+    border-color:rgba(191,239,255,0.22) !important;
   }
   .progress-fill,
   #savings-bar {
-    background:linear-gradient(90deg,#ffffff,#a7a7a7) !important;
+    background:linear-gradient(90deg,#e8fbff,#91dcff,#4aa4d8) !important;
   }
   .nav-tab.active .nav-icon,
   .nav-tab.active .nav-label {
-    color:#fff !important;
-    filter:drop-shadow(0 0 10px rgba(255,255,255,0.5)) !important;
+    color:#eafcff !important;
+    filter:drop-shadow(0 0 12px rgba(153,225,255,0.78)) !important;
   }
   .nav-tab.active::before {
-    background:linear-gradient(90deg,#fff,#9f9f9f) !important;
-    box-shadow:0 0 12px rgba(255,255,255,0.35) !important;
+    background:linear-gradient(90deg,#f3fdff,#6bc5f0) !important;
+    box-shadow:0 0 16px rgba(136,218,255,0.6) !important;
   }
   .app-shell [style*="color:#49769F"],
   .app-shell [style*="color:#6EA2B3"],
@@ -436,14 +444,14 @@
   .app-shell [style*="color:#BDD8E9"],
   .modal-sheet [style*="color:#94a3b8"],
   .modal-sheet [style*="color:#475569"] {
-    color:rgba(255,255,255,0.88) !important;
-    text-shadow:0 1px 10px rgba(0,0,0,0.35);
+    color:rgba(232,250,255,0.9) !important;
+    text-shadow:0 1px 12px rgba(0,20,34,0.42);
   }
   .app-shell [style*="color:#4ade80"],
   .app-shell [style*="color:#a7f3d0"],
   .app-shell [style*="color:#fbbf24"] {
-    color:#ffffff !important;
-    text-shadow:0 0 16px rgba(255,255,255,0.18);
+    color:#effcff !important;
+    text-shadow:0 0 18px rgba(150,225,255,0.35);
   }
   .card > div,
   .gradient-card > div,
@@ -467,11 +475,43 @@
   #monthly-income,
   #monthly-expense,
   #monthly-balance {
-    color:#fff !important;
-    text-shadow:0 0 36px rgba(255,255,255,0.18);
+    color:#f4fdff !important;
+    text-shadow:0 0 36px rgba(166,229,255,0.32);
   }
   .bag-inner svg {
-    filter:grayscale(1) brightness(1.28) drop-shadow(0 12px 28px rgba(255,255,255,0.16));
+    filter:saturate(.8) brightness(1.1) drop-shadow(0 16px 34px rgba(176,231,255,0.28));
+  }
+  .app-shell::before {
+    content:'';
+    display:block;
+    height:1px;
+    margin:0 8px 18px;
+    background:linear-gradient(90deg, transparent, rgba(231,251,255,0.62), transparent);
+    box-shadow:0 0 28px rgba(183,235,255,0.55);
+  }
+  .page > .gradient-card:first-child {
+    min-height:265px;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+    overflow:hidden;
+  }
+  .page > .gradient-card:first-child::before {
+    inset:-36% -20% auto -20% !important;
+    height:190px !important;
+    transform:none !important;
+  }
+  .card:hover,
+  .gradient-card:hover {
+    border-color:rgba(225,250,255,0.45) !important;
+  }
+  #grand-total {
+    font-size:46px !important;
+    letter-spacing:-1.5px !important;
+  }
+  @media (max-width:420px) {
+    .page > .gradient-card:first-child { min-height:238px; }
+    #grand-total { font-size:39px !important; }
   }
 </style>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -653,7 +693,7 @@ const CONFIG = {
   <button onclick="exportToExcel()" style="width:100%; background:linear-gradient(135deg,#166534,#14532d); border:1px solid rgba(74,222,128,0.3); color:#4ade80; padding:13px; border-radius:14px; cursor:pointer; font-size:14px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:8px;">
     📊 匯出 Excel 報表
   </button>
-  <div style="text-align:center; color:#315d84; font-size:10px; margin:12px 0 2px;">版面 v10 · 亮字修正版</div>
+  <div style="text-align:center; color:#315d84; font-size:10px; margin:12px 0 2px;">版面 v11 · Atlas 藍黑科技版</div>
 </div>
 
 <!-- PAGE 2: 投資 -->
