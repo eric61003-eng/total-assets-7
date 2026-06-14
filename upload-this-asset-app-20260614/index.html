@@ -973,6 +973,107 @@
     background-image:none !important;
     color:#102422 !important;
   }
+
+  /* v20 simpler monochrome palette */
+  :root {
+    --bg:#111111;
+    --card:#1b1b1b;
+    --border:#3a3a3a;
+    --accent:#f5f5f5;
+    --accent2:#d4d4d4;
+    --mid:#b8b8b8;
+    --pale:#ffffff;
+    --text:#f5f5f5;
+    --muted:#9ca3af;
+    --green:#34d399;
+    --red:#fb7185;
+    --yellow:#f5f5f5;
+  }
+  body,
+  header,
+  .bottom-nav {
+    background:#111111 !important;
+  }
+  .card,
+  .gradient-card,
+  .modal-sheet,
+  .record-action-bar {
+    background:#1b1b1b !important;
+    border-color:#3a3a3a !important;
+    box-shadow:none !important;
+  }
+  .btn-primary,
+  button.btn-primary,
+  #itab-holdings,
+  .record-action.expense,
+  .record-action.income,
+  .invest-toolbar .alert-btn,
+  .privacy-toggle,
+  html.privacy-mode .privacy-toggle {
+    background:#f5f5f5 !important;
+    color:#111111 !important;
+    border-color:#f5f5f5 !important;
+    box-shadow:none !important;
+  }
+  .invest-toolbar button,
+  .btn-edit {
+    background:#2a2a2a !important;
+    color:#f5f5f5 !important;
+    border-color:#4b4b4b !important;
+  }
+  .btn-danger {
+    background:#2a1d1f !important;
+    color:#fb7185 !important;
+    border-color:#5f2a33 !important;
+  }
+  input,
+  select,
+  textarea {
+    background:#141414 !important;
+    border-color:#3a3a3a !important;
+    color:#f5f5f5 !important;
+  }
+  .progress-fill,
+  .progress-bar div,
+  #savings-bar,
+  .nav-tab.active::before {
+    background:#f5f5f5 !important;
+  }
+  .invest-money,
+  #portfolio-total,
+  #portfolio-cost,
+  #tw-val,
+  #us-val {
+    color:#ffffff !important;
+    font-weight:950 !important;
+    text-shadow:none !important;
+  }
+  .profit-pos,
+  #portfolio-profit[style*="34d399"],
+  #tw-pnl[style*="34d399"],
+  #us-pnl[style*="34d399"] {
+    color:#34d399 !important;
+    font-weight:950 !important;
+    text-shadow:none !important;
+  }
+  .profit-neg,
+  #portfolio-profit[style*="fb7185"],
+  #tw-pnl[style*="fb7185"],
+  #us-pnl[style*="fb7185"] {
+    color:#fb7185 !important;
+    font-weight:950 !important;
+    text-shadow:none !important;
+  }
+  .invest-card-actions {
+    display:flex;
+    gap:8px;
+  }
+  .invest-card-actions button {
+    min-width:54px;
+    padding:7px 10px !important;
+    font-size:12px !important;
+    font-weight:800;
+  }
   @media (max-width:420px) {
     #grand-total { font-size:38px !important; }
     #portfolio-total { font-size:28px !important; }
@@ -1175,7 +1276,7 @@ const CONFIG = {
   <button onclick="exportToExcel()" style="width:100%; background:linear-gradient(135deg,#166534,#14532d); border:1px solid rgba(74,222,128,0.3); color:#4ade80; padding:13px; border-radius:14px; cursor:pointer; font-size:14px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:8px;">
     📊 匯出 Excel 報表
   </button>
-  <div style="text-align:center; color:#315d84; font-size:10px; margin:12px 0 2px;">版面 v19 · 全單色版</div>
+  <div style="text-align:center; color:#315d84; font-size:10px; margin:12px 0 2px;">版面 v20 · 投資獨立清晰版</div>
 </div>
 
 <!-- PAGE 2: 投資 -->
@@ -1714,6 +1815,10 @@ let state = {
 const EXPENSE_CATS = ['房租','孝親費用','保險','水電','家人雜費','菸','餐費','社交娛樂','遊戲','訂閱','交通','保養 醫美','生活開銷','衣物','醫療','學習','投資','其他'];
 const INCOME_CATS  = ['薪資','外案','偏財','其他'];
 const MONTHS = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+const INVESTMENT_CATEGORIES = ['投資','投資收入','投資轉入'];
+function isInvestmentCategory(t) {
+  return INVESTMENT_CATEGORIES.includes(t?.category);
+}
 
 // ── Init ─────────────────────────────────────────────────
 async function init() {
@@ -2052,7 +2157,7 @@ function txAfterCashAnchor(t) {
 function getCashBalance() {
   const base = getInitialBalance();
   const after = state.transactions.filter(txAfterCashAnchor);
-  const nonInvest = after.filter(t => t.category !== '投資收入' && t.category !== '投資轉入');
+  const nonInvest = after.filter(t => !isInvestmentCategory(t));
   const totalInc = sum(nonInvest.filter(t => t.type==='收入'), 'amount');
   const totalExp = sum(nonInvest.filter(t => t.type==='支出'), 'amount');
   return base + totalInc - totalExp;
@@ -2098,7 +2203,7 @@ async function saveInitBalance() {
 function renderOverview() {
   const txs = state.transactions;
   const curM = new Date().getMonth() + 1;
-  const nonInvest = txs.filter(t => t.category !== '投資收入' && t.category !== '投資轉入');
+  const nonInvest = txs.filter(t => !isInvestmentCategory(t));
 
   // 現金以最近一次手動校正為基準，再加減校正後新增的記帳。
   const cash = getCashBalance();
@@ -2142,7 +2247,7 @@ function renderOverview() {
   balEl.textContent = fmtNT(mBal);
   balEl.style.color = mBal >= 0 ? '#4ade80' : '#f87171';
 
-  // Expense ranking（排除投資轉入）
+  // Expense ranking（排除投資科目）
   const byCat = groupSum(nonInvest.filter(t=>t.type==='支出'));
   const top = Object.entries(byCat).sort((a,b)=>b[1]-a[1]).slice(0,7);
   const maxV = top[0]?.[1] || 1;
@@ -2359,8 +2464,8 @@ function renderInvestments() {
           <div style="font-size:12px; color:#49769F; margin-top:2px;">${inv.ticker} · ${inv.quantity} ${qtyLabel}</div>
         </div>
         <div style="text-align:right;">
-          <div style="font-size:15px; font-weight:700;">${valLabel}</div>
-          <div style="font-size:12px; color:${pct>=0?'#4ade80':'#f87171'}; margin-top:2px;">${hasP?(pct>=0?'▲':'▼')+Math.abs(pct).toFixed(1)+'%':'—'}</div>
+          <div class="invest-money" style="font-size:16px; font-weight:900;">${valLabel}</div>
+          <div class="${pct>=0?'profit-pos':'profit-neg'}" style="font-size:13px; margin-top:3px;">${hasP?(pct>=0?'▲':'▼')+Math.abs(pct).toFixed(1)+'%':'—'}</div>
         </div>
       </div>
       <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; padding-top:8px; border-top:1px solid rgba(125,189,232,0.1); font-size:11px; margin-bottom:8px;">
@@ -2375,12 +2480,9 @@ function renderInvestments() {
       <div style="display:flex; justify-content:space-between; align-items:center; padding-top:6px; border-top:1px solid rgba(125,189,232,0.1);">
         <div style="font-size:12px;">
           <span style="color:#49769F;">未實現: </span>
-          <span style="font-weight:700; color:${profit>=0?'#4ade80':'#f87171'};">${hasP?(profit>=0?'+':'')+fmtNT(profit):'—'}</span>
+          <span class="${profit>=0?'profit-pos':'profit-neg'}">${hasP?(profit>=0?'+':'')+fmtNT(profit):'—'}</span>
         </div>
-        <div style="display:flex; gap:6px;">
-          <button onclick="openAddPosition('${inv.id}')" style="background:rgba(10,65,116,0.6); color:#7BBDE8; border:1px solid rgba(125,189,232,0.2); padding:5px 9px; border-radius:8px; font-size:11px; cursor:pointer; font-weight:600;">加倉</button>
-          <button onclick="openClosePosition('${inv.id}')" style="background:rgba(10,50,30,0.6); color:#4ade80; border:1px solid rgba(74,222,128,0.2); padding:5px 9px; border-radius:8px; font-size:11px; cursor:pointer; font-weight:600;">了結</button>
-          <button onclick="openExitAlertModal('${inv.id}')" style="background:rgba(244,121,13,0.18); color:#F4BE6B; border:1px solid rgba(244,190,107,0.28); padding:5px 9px; border-radius:8px; font-size:11px; cursor:pointer; font-weight:600;">提醒</button>
+        <div class="invest-card-actions">
           <button onclick="openEditInvestment('${inv.id}')" class="btn-edit">編輯</button>
           <button onclick="deleteInvestment('${inv.id}')" class="btn-danger">刪除</button>
         </div>
@@ -2395,10 +2497,10 @@ function renderInvestments() {
   setText('portfolio-cost',  fmtNT(totalCost));
   const profEl = document.getElementById('portfolio-profit');
   profEl.textContent = (totalProfit>=0?'+':'')+fmtNT(totalProfit);
-  profEl.style.color = totalProfit>=0?'#4ade80':'#f87171';
+  profEl.style.color = totalProfit>=0?'#34d399':'#fb7185';
   const realEl = document.getElementById('portfolio-realized');
   realEl.textContent = (realizedTotal>=0?'+':'')+fmtNT(realizedTotal);
-  realEl.style.color = realizedTotal>=0?'#fbbf24':'#f87171';
+  realEl.style.color = realizedTotal>=0?'#34d399':'#fb7185';
 
   // Summary cards: TW vs US
   const twProfit = twVal - twCost;
@@ -2413,7 +2515,7 @@ function renderInvestments() {
     const pnlEl = document.getElementById(prefix+'-pnl');
     if (pnlEl) {
       pnlEl.textContent = (profit>=0?'▲ +':'▼ ') + fmtNT(Math.abs(profit));
-      pnlEl.style.color = profit >= 0 ? '#4ade80' : '#f87171';
+      pnlEl.style.color = profit >= 0 ? '#34d399' : '#fb7185';
     }
 
     const costEl = document.getElementById(prefix+'-cost-label');
@@ -2422,12 +2524,12 @@ function renderInvestments() {
     const pctEl = document.getElementById(prefix+'-pct-label');
     if (pctEl) {
       pctEl.textContent = (pct>=0?'+':'') + pct.toFixed(1) + '%';
-      pctEl.style.color = pct >= 0 ? color : '#f87171';
+      pctEl.style.color = pct >= 0 ? color : '#fb7185';
     }
   };
 
-  fillCard('tw', twVal, twCost, twProfit, '#4ade80');
-  fillCard('us', usVal, usCost, usProfit, '#7BBDE8');
+  fillCard('tw', twVal, twCost, twProfit, '#34d399');
+  fillCard('us', usVal, usCost, usProfit, '#34d399');
 }
 
 // ── Render: Monthly ───────────────────────────────────────
@@ -2448,7 +2550,7 @@ function selectMonth(m) {
 
 function renderMonthly() {
   const txs = state.transactions
-    .filter(t => t.category !== '投資收入' && t.category !== '投資轉入')
+    .filter(t => !isInvestmentCategory(t))
     .filter(t => new Date(t.date).getMonth()+1 === state.selMonth);
   const inc = sum(txs.filter(t=>t.type==='收入'), 'amount');
   const exp = sum(txs.filter(t=>t.type==='支出'), 'amount');
@@ -2507,7 +2609,7 @@ function setRecFilter(i) {
 
 function renderRecords() {
   const m = state.recFilter > 0 ? state.recFilter : (new Date().getMonth() + 1);
-  let txs = state.transactions.filter(t => t.category !== '投資收入' && t.category !== '投資轉入');
+  let txs = state.transactions.filter(t => !isInvestmentCategory(t));
   txs = txs.filter(t => new Date(t.date).getMonth()+1 === m);
   txs.sort((a,b) => new Date(b.date) - new Date(a.date));
 
