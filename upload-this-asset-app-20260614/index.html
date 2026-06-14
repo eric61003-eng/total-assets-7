@@ -5,11 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>總資產</title>
   <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="總資產">
-  <meta name="theme-color" content="#001D39">
+  <meta name="theme-color" content="#1f1d1a">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script>
@@ -842,6 +844,135 @@
   #savings-bar {
     background:#F4BE6B !important;
   }
+  .privacy-toggle {
+    background:rgba(41,39,35,0.78);
+    border:1px solid rgba(244,190,107,0.28);
+    color:#FFF8EA;
+    padding:9px;
+    border-radius:12px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-width:39px;
+    min-height:39px;
+  }
+  html.privacy-mode .privacy-toggle {
+    background:#F4BE6B !important;
+    color:#171614 !important;
+  }
+  html.privacy-mode #grand-total,
+  html.privacy-mode #cash-balance,
+  html.privacy-mode #invest-value,
+  html.privacy-mode #invest-profit-home,
+  html.privacy-mode #month-income,
+  html.privacy-mode #month-expense,
+  html.privacy-mode #month-balance,
+  html.privacy-mode #monthly-income,
+  html.privacy-mode #monthly-expense,
+  html.privacy-mode #monthly-balance,
+  html.privacy-mode #portfolio-total,
+  html.privacy-mode #portfolio-cost,
+  html.privacy-mode #portfolio-profit,
+  html.privacy-mode #portfolio-realized,
+  html.privacy-mode #realized-total-twd,
+  html.privacy-mode #realized-this-month,
+  html.privacy-mode #realized-this-year,
+  html.privacy-mode #realized-usd-month,
+  html.privacy-mode #tw-val,
+  html.privacy-mode #tw-pnl,
+  html.privacy-mode #tw-cost-label,
+  html.privacy-mode #tw-pct-label,
+  html.privacy-mode #us-val,
+  html.privacy-mode #us-pnl,
+  html.privacy-mode #us-cost-label,
+  html.privacy-mode #us-pct-label,
+  html.privacy-mode #filter-balance,
+  html.privacy-mode #debt-total,
+  html.privacy-mode #init-balance-hint,
+  html.privacy-mode #category-breakdown span:last-child,
+  html.privacy-mode #income-breakdown span:last-child,
+  html.privacy-mode #expense-ranking span:last-child,
+  html.privacy-mode #transactions-list span:last-child,
+  html.privacy-mode #transactions-list .card > div:last-child,
+  html.privacy-mode #tw-stocks-list .card,
+  html.privacy-mode #us-stocks-list .card,
+  html.privacy-mode #realized-gains-list .card,
+  html.privacy-mode #debts-list .card,
+  html.privacy-mode #debt-collected-list .card {
+    filter:blur(8px) !important;
+    user-select:none;
+  }
+  html.privacy-mode #grand-total {
+    filter:none !important;
+    color:transparent !important;
+    text-shadow:none !important;
+    min-width:230px;
+    position:relative;
+  }
+  html.privacy-mode #grand-total::after {
+    content:'NT$ ••••••';
+    color:#fffdf6;
+    text-shadow:0 2px 12px rgba(0,0,0,0.62);
+    position:absolute;
+    left:10px;
+    top:4px;
+  }
+
+  /* v19 strict solid UI: remove all visible gradients */
+  *,
+  *::before,
+  *::after {
+    background-image:none !important;
+  }
+  body {
+    background:#1f1d1a !important;
+  }
+  header,
+  .bottom-nav {
+    background:#181715 !important;
+  }
+  .card,
+  .gradient-card,
+  .modal-sheet,
+  .record-action-bar {
+    background:#2b2823 !important;
+  }
+  .gradient-card::before,
+  .gradient-card::after {
+    display:none !important;
+  }
+  .bag-wrap {
+    display:none !important;
+  }
+  button[style*="linear-gradient"],
+  button[style*="radial-gradient"],
+  div[style*="linear-gradient"],
+  div[style*="radial-gradient"],
+  .app-shell [style*="linear-gradient"],
+  .app-shell [style*="radial-gradient"] {
+    background:#3f3b34 !important;
+    background-image:none !important;
+  }
+  .btn-primary,
+  button.btn-primary,
+  .record-action.expense,
+  #itab-holdings,
+  .nav-tab.active::before,
+  .progress-fill,
+  .progress-bar div,
+  #savings-bar {
+    background:#F4BE6B !important;
+    background-image:none !important;
+    color:#171614 !important;
+  }
+  .record-action.income,
+  .invest-toolbar .alert-btn,
+  .app-header-inner > div > div:first-child {
+    background:#C0DEDF !important;
+    background-image:none !important;
+    color:#102422 !important;
+  }
   @media (max-width:420px) {
     #grand-total { font-size:38px !important; }
     #portfolio-total { font-size:28px !important; }
@@ -856,6 +987,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <script>
+    try {
+      if (localStorage.getItem('privacyMode') === '1') {
+        document.documentElement.classList.add('privacy-mode');
+      }
+    } catch (_) {}
+  </script>
 </head>
 <body>
 
@@ -886,9 +1024,14 @@ const CONFIG = {
         <div id="last-updated" style="font-size:10px; color:#49769F;">載入中...</div>
       </div>
     </div>
-    <button onclick="refreshData()" style="background:rgba(10,65,116,0.5); border:1px solid rgba(125,189,232,0.15); color:#7BBDE8; padding:9px; border-radius:12px; cursor:pointer; display:flex; align-items:center;">
-      <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-    </button>
+    <div style="display:flex; align-items:center; gap:8px;">
+      <button id="privacy-toggle" class="privacy-toggle" onclick="togglePrivacyMode()" aria-label="切換隱私模式" title="切換隱私模式">
+        <span id="privacy-icon" style="font-size:16px; line-height:1;">👁</span>
+      </button>
+      <button onclick="refreshData()" style="background:rgba(10,65,116,0.5); border:1px solid rgba(125,189,232,0.15); color:#7BBDE8; padding:9px; border-radius:12px; cursor:pointer; display:flex; align-items:center;">
+        <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+      </button>
+    </div>
   </div>
 </header>
 
@@ -1032,7 +1175,7 @@ const CONFIG = {
   <button onclick="exportToExcel()" style="width:100%; background:linear-gradient(135deg,#166534,#14532d); border:1px solid rgba(74,222,128,0.3); color:#4ade80; padding:13px; border-radius:14px; cursor:pointer; font-size:14px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:8px;">
     📊 匯出 Excel 報表
   </button>
-  <div style="text-align:center; color:#315d84; font-size:10px; margin:12px 0 2px;">版面 v16 · 單色毛玻璃版</div>
+  <div style="text-align:center; color:#315d84; font-size:10px; margin:12px 0 2px;">版面 v19 · 全單色版</div>
 </div>
 
 <!-- PAGE 2: 投資 -->
@@ -1565,6 +1708,7 @@ let state = {
   txType: '支出',
   selMonth: new Date().getMonth() + 1,
   recFilter: 0,
+  privacyMode: false,
 };
 
 const EXPENSE_CATS = ['房租','孝親費用','保險','水電','家人雜費','菸','餐費','社交娛樂','遊戲','訂閱','交通','保養 醫美','生活開銷','衣物','醫療','學習','投資','其他'];
@@ -1579,6 +1723,8 @@ async function init() {
   document.getElementById('tx-date').value = new Date().toISOString().split('T')[0];
   document.getElementById('current-month-label').textContent = `${state.selMonth}月`;
   document.getElementById('savings-goal-label').textContent = CONFIG.savingsGoal.toLocaleString();
+  state.privacyMode = localStorage.getItem('privacyMode') === '1';
+  applyPrivacyMode(false);
   state.exitAlerts = loadExitAlerts();
   selectTxType('支出');
   buildMonthTabs();
@@ -1612,6 +1758,22 @@ function renderAll() {
   renderMonthly();
   renderRecords();
   renderRealizedGains();
+  applyPrivacyMode(false);
+}
+
+function applyPrivacyMode(showToast=true) {
+  document.documentElement.classList.toggle('privacy-mode', !!state.privacyMode);
+  const icon = document.getElementById('privacy-icon');
+  if (icon) icon.textContent = state.privacyMode ? '🙈' : '👁';
+  const btn = document.getElementById('privacy-toggle');
+  if (btn) btn.title = state.privacyMode ? '顯示金額' : '隱藏金額';
+  if (showToast) toast(state.privacyMode ? '已隱藏金額' : '已顯示金額');
+}
+
+function togglePrivacyMode() {
+  state.privacyMode = !state.privacyMode;
+  localStorage.setItem('privacyMode', state.privacyMode ? '1' : '0');
+  applyPrivacyMode(true);
 }
 
 // ── Stock prices ──────────────────────────────────────────
