@@ -1133,6 +1133,49 @@
     border-color:rgba(251,113,133,0.48);
     background:#241417;
   }
+  #month-income {
+    color:#8bd3dd !important;
+    font-weight:950 !important;
+  }
+  #month-expense {
+    color:#fbbf24 !important;
+    font-weight:950 !important;
+  }
+  .market-toggle-row {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin:2px 0 12px;
+  }
+  .market-toggle {
+    border:1px solid #3a3a3a;
+    border-radius:14px;
+    padding:12px 10px;
+    background:#1b1b1b;
+    color:#d4d4d4;
+    font-size:14px;
+    font-weight:950;
+    cursor:pointer;
+  }
+  .market-toggle.active {
+    background:#f5f5f5 !important;
+    color:#111111 !important;
+    border-color:#f5f5f5;
+  }
+  .market-section-title {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    color:#f5f5f5;
+    font-size:14px;
+    font-weight:950;
+    margin:0 0 8px;
+  }
+  .market-section-title span:last-child {
+    color:#9ca3af;
+    font-size:12px;
+    font-weight:800;
+  }
   @media (max-width:420px) {
     #grand-total { font-size:38px !important; }
     #portfolio-total { font-size:28px !important; }
@@ -1335,7 +1378,7 @@ const CONFIG = {
   <button onclick="exportToExcel()" style="width:100%; background:linear-gradient(135deg,#166534,#14532d); border:1px solid rgba(74,222,128,0.3); color:#4ade80; padding:13px; border-radius:14px; cursor:pointer; font-size:14px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:8px;">
     📊 匯出 Excel 報表
   </button>
-  <div style="text-align:center; color:#315d84; font-size:10px; margin:12px 0 2px;">版面 v22 · 投資入口提醒版</div>
+  <div style="text-align:center; color:#315d84; font-size:10px; margin:12px 0 2px;">版面 v23 · 台美股切換版</div>
 </div>
 
 <!-- PAGE 2: 投資 -->
@@ -1407,13 +1450,20 @@ const CONFIG = {
       </div>
     </div>
 
-    <!-- 台股 -->
-    <div style="font-size:13px; font-weight:700; color:#49769F; margin-bottom:8px; letter-spacing:1px;">🇹🇼 台股</div>
-    <div id="tw-stocks-list" style="margin-bottom:18px;"></div>
+    <div class="market-toggle-row">
+      <button id="market-toggle-tw" class="market-toggle active" onclick="showMarketSection('tw')">🇹🇼 看台股</button>
+      <button id="market-toggle-us" class="market-toggle" onclick="showMarketSection('us')">🇺🇸 看美股</button>
+    </div>
 
-    <!-- 美股 -->
-    <div style="font-size:13px; font-weight:700; color:#49769F; margin-bottom:8px; letter-spacing:1px;">🇺🇸 美股</div>
-    <div id="us-stocks-list" style="margin-bottom:10px;"></div>
+    <div id="market-section-tw">
+      <div class="market-section-title"><span>🇹🇼 台股持倉</span><span id="tw-count-label">—</span></div>
+      <div id="tw-stocks-list" style="margin-bottom:18px;"></div>
+    </div>
+
+    <div id="market-section-us" style="display:none;">
+      <div class="market-section-title"><span>🇺🇸 美股持倉</span><span id="us-count-label">—</span></div>
+      <div id="us-stocks-list" style="margin-bottom:10px;"></div>
+    </div>
 
     <button onclick="openHoldingAdjustModal()" style="background:none; border:1.5px dashed rgba(125,189,232,0.2); color:#49769F; padding:14px; border-radius:14px; width:100%; cursor:pointer; font-size:14px; margin-bottom:20px;">
       + 持倉調整
@@ -1870,6 +1920,7 @@ let state = {
   selMonth: new Date().getMonth() + 1,
   recFilter: 0,
   privacyMode: false,
+  marketSection: 'tw',
 };
 
 const EXPENSE_CATS = ['房租','孝親費用','保險','水電','家人雜費','菸','餐費','社交娛樂','遊戲','訂閱','交通','保養 醫美','生活開銷','衣物','醫療','學習','投資','其他'];
@@ -2498,6 +2549,23 @@ async function deleteExitAlert() {
   toast('提醒已刪除');
 }
 
+function showMarketSection(section) {
+  state.marketSection = section === 'us' ? 'us' : 'tw';
+  applyMarketSection();
+}
+
+function applyMarketSection() {
+  const isTW = state.marketSection !== 'us';
+  const twSec = document.getElementById('market-section-tw');
+  const usSec = document.getElementById('market-section-us');
+  const twBtn = document.getElementById('market-toggle-tw');
+  const usBtn = document.getElementById('market-toggle-us');
+  if (twSec) twSec.style.display = isTW ? 'block' : 'none';
+  if (usSec) usSec.style.display = isTW ? 'none' : 'block';
+  twBtn?.classList.toggle('active', isTW);
+  usBtn?.classList.toggle('active', !isTW);
+}
+
 // ── Render: Investments ───────────────────────────────────
 function renderInvestments() {
   const tw = state.investments.filter(i=>i.market==='台股');
@@ -2570,6 +2638,9 @@ function renderInvestments() {
 
   document.getElementById('tw-stocks-list').innerHTML = tw.length ? tw.map((c,i)=>card(c,i)).join('') : '<div style="color:#49769F; font-size:13px; padding:8px 0;">尚無台股持倉</div>';
   document.getElementById('us-stocks-list').innerHTML = us.length ? us.map((c,i)=>card(c,i)).join('') : '<div style="color:#49769F; font-size:13px; padding:8px 0;">尚無美股持倉</div>';
+  setText('tw-count-label', `${tw.length} 檔`);
+  setText('us-count-label', `${us.length} 檔`);
+  applyMarketSection();
 
   setText('portfolio-total', fmtNT(totalVal));
   setText('portfolio-cost',  fmtNT(totalCost));
