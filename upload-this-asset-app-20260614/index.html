@@ -894,7 +894,6 @@
   html.privacy-mode #us-cost-label,
   html.privacy-mode #us-pct-label,
   html.privacy-mode #filter-balance,
-  html.privacy-mode #debt-total,
   html.privacy-mode #init-balance-hint,
   html.privacy-mode #category-breakdown span:last-child,
   html.privacy-mode #income-breakdown span:last-child,
@@ -902,9 +901,7 @@
   html.privacy-mode #expense-ranking span:last-child,
   html.privacy-mode #transactions-list span:last-child,
   html.privacy-mode #transactions-list .card > div:last-child,
-  html.privacy-mode #realized-gains-list .card,
-  html.privacy-mode #debts-list .card,
-  html.privacy-mode #debt-collected-list .card {
+  html.privacy-mode #realized-gains-list .card {
     filter:blur(8px) !important;
     user-select:none;
   }
@@ -1214,6 +1211,11 @@
   }
   .profit-rank-note {
     margin-bottom:10px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+  .profit-rank-card {
     padding:10px 12px;
     border:1px solid #3a3a3a;
     border-radius:12px;
@@ -1222,7 +1224,12 @@
     font-size:12px;
     font-weight:850;
   }
-  .profit-rank-note strong {
+  .profit-rank-card .rank-market {
+    color:#9ca3af;
+    font-size:11px;
+    margin-bottom:4px;
+  }
+  .profit-rank-card strong {
     color:#f5f5f5;
   }
   @media (max-width:420px) {
@@ -1230,6 +1237,7 @@
     #portfolio-total { font-size:28px !important; }
     .record-action-bar { top:62px; }
     .invest-toolbar { grid-template-columns:1fr; }
+    .profit-rank-note { grid-template-columns:1fr; }
   }
   @media (max-width:420px) {
     .page > .gradient-card:first-child { min-height:238px; }
@@ -2754,7 +2762,7 @@ function debtCard(d) {
     </div>
     <div style="display:flex; gap:8px; align-items:center;">
       <div style="text-align:right;">
-        <div style="font-size:15px; font-weight:700; color:${d.type==='代墊'?'#fbbf24':'#f87171'};">${fmtNT(d.amount)}</div>
+        <div class="privacy-number" style="font-size:15px; font-weight:700; color:${d.type==='代墊'?'#fbbf24':'#f87171'};">${fmtNT(d.amount)}</div>
       </div>
       <div style="display:flex; flex-direction:column; gap:4px;">
         <button onclick="toggleDebt('${d.id}')" class="btn-edit" style="padding:5px 8px; font-size:11px;">${d.status==='已收回'?'取消':'收回'}</button>
@@ -2775,7 +2783,7 @@ function renderDebts() {
   const pending   = state.debts.filter(d => d.status !== '已收回');
   const collected = state.debts.filter(d => d.status === '已收回');
   const total = sum(pending, 'amount');
-  setText('debt-total', total > 0 ? `待收 ${fmtNT(total)}` : '');
+  document.getElementById('debt-total').innerHTML = total > 0 ? `待收 <span class="privacy-number">${fmtNT(total)}</span>` : '';
 
   document.getElementById('debts-list').innerHTML = pending.length
     ? pending.map(debtCard).join('')
@@ -3191,17 +3199,24 @@ function renderInvestments() {
   if (rankBtn) {
     rankBtn.textContent = state.investSortMode === 'profit-desc' ? '利潤排序：高至低' : '利潤排序：低至高';
   }
-  const rankedAll = [...state.investments]
-    .map(inv => ({ inv, profit: getInvestmentMetrics(inv).profit }))
-    .sort((a, b) => state.investSortMode === 'profit-desc' ? b.profit - a.profit : a.profit - b.profit);
   const noteEl = document.getElementById('profit-rank-note');
   if (noteEl) {
-    const target = rankedAll[0];
-    noteEl.style.display = target ? 'block' : 'none';
+    const rankLabel = state.investSortMode === 'profit-desc' ? '目前利潤最高' : '目前利潤最低';
+    const buildRankCard = (marketLabel, list) => {
+      const target = list
+        .map(inv => ({ inv, profit: getInvestmentMetrics(inv).profit }))
+        .sort((a, b) => state.investSortMode === 'profit-desc' ? b.profit - a.profit : a.profit - b.profit)[0];
+      return `
+        <div class="profit-rank-card">
+          <div class="rank-market">${marketLabel}</div>
+          ${target
+            ? `${rankLabel}：<strong>${target.inv.name}</strong><br>未實現 <span class="privacy-number">${target.profit >= 0 ? '+' : ''}${fmtNT(target.profit)}</span>`
+            : '目前沒有持倉'}
+        </div>`;
+    };
+    noteEl.style.display = (tw.length || us.length) ? 'grid' : 'none';
     noteEl.className = 'profit-rank-note';
-    noteEl.innerHTML = target
-      ? `${state.investSortMode === 'profit-desc' ? '目前利潤最高' : '目前利潤最低'}：<strong>${target.inv.name}</strong>，未實現 <span class="privacy-number">${target.profit >= 0 ? '+' : ''}${fmtNT(target.profit)}</span>`
-      : '';
+    noteEl.innerHTML = `${buildRankCard('台股', tw)}${buildRankCard('美股', us)}`;
   }
   setText('tw-count-label', `${tw.length} 檔`);
   setText('us-count-label', `${us.length} 檔`);
