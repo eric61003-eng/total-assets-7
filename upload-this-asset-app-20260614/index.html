@@ -1186,10 +1186,14 @@
   }
   .daily-diff-card {
     margin-top:8px;
-    padding:10px 11px;
+    padding:12px 13px;
     border-radius:12px;
     background:#111111;
     border:1px solid #3a3a3a;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
   }
   .daily-diff-card.is-pos {
     border-color:rgba(52,211,153,0.35);
@@ -1197,21 +1201,14 @@
   .daily-diff-card.is-neg {
     border-color:rgba(251,113,133,0.38);
   }
-  .daily-diff-row {
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:8px;
-    margin-bottom:7px;
-  }
   .daily-diff-label {
     color:#9ca3af;
-    font-size:11px;
-    font-weight:800;
-    margin-bottom:2px;
+    font-size:13px;
+    font-weight:950;
   }
   .daily-diff-value {
     color:#f5f5f5;
-    font-size:13px;
+    font-size:18px;
     font-weight:950;
   }
   .profit-rank-note {
@@ -1432,7 +1429,7 @@ const CONFIG = {
   <button onclick="exportToExcel()" style="width:100%; background:linear-gradient(135deg,#166534,#14532d); border:1px solid rgba(74,222,128,0.3); color:#4ade80; padding:13px; border-radius:14px; cursor:pointer; font-size:14px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:8px;">
     📊 匯出 Excel 報表
   </button>
-  <div style="text-align:center; color:#315d84; font-size:10px; margin:12px 0 2px;">版面 v32 · 投資今日漲跌版</div>
+  <div style="text-align:center; color:#315d84; font-size:10px; margin:12px 0 2px;">版面 v33 · 月報明細與今日漲跌版</div>
 </div>
 
 <!-- PAGE 2: 投資 -->
@@ -2092,6 +2089,19 @@ const CONFIG = {
 </div>
 
 <!-- ========================================================
+     MODAL: 月報分類明細
+======================================================== -->
+<div id="monthly-category-detail-modal" class="modal-overlay" onclick="backdropClose(event,'monthly-category-detail-modal')">
+  <div class="modal-sheet">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+      <div id="monthly-category-title" style="font-size:18px; font-weight:800;">分類明細</div>
+      <button onclick="closeModal('monthly-category-detail-modal')" style="background:rgba(10,65,116,0.7); border:1px solid rgba(125,189,232,0.15); color:#BDD8E9; width:32px; height:32px; border-radius:8px; cursor:pointer; font-size:16px; line-height:1;">✕</button>
+    </div>
+    <div id="monthly-category-detail-content"></div>
+  </div>
+</div>
+
+<!-- ========================================================
      JAVASCRIPT
 ======================================================== -->
 <script>
@@ -2123,6 +2133,15 @@ const EXPENSE_CATS = ['房租','孝親費用','保險','水電','家人雜費','
 const INCOME_CATS  = ['薪資','外案','偏財','其他'];
 const MONTHS = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
 const INVESTMENT_CATEGORIES = ['投資','投資收入','投資轉入'];
+function safeText(value) {
+  return String(value ?? '').replace(/[&<>"']/g, ch => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[ch]));
+}
 function isInvestmentCategory(t) {
   return INVESTMENT_CATEGORIES.includes(t?.category);
 }
@@ -3061,8 +3080,8 @@ function renderInvestments() {
     const hasDaily = hasP && previousClose;
     const dailyClass = (dailyChange || 0) >= 0 ? 'is-pos' : 'is-neg';
     const dailyText = hasDaily
-      ? `${dailyChange >= 0 ? '▲ +' : '▼ '}${Math.abs(dailyChange).toLocaleString('zh-TW', { maximumFractionDigits: 2 })} / ${dailyChange >= 0 ? '+' : ''}${dailyPct.toFixed(2)}%`
-      : '等待昨收資料';
+      ? `${dailyChange >= 0 ? '▲ +' : '▼ '}${Math.abs(dailyPct).toFixed(2)}%`
+      : '等待資料';
     const dailyColor = (dailyChange || 0) >= 0 ? '#34d399' : '#fb7185';
 
     return `
@@ -3091,17 +3110,8 @@ function renderInvestments() {
           <span class="value ${profit>=0?'profit-pos':'profit-neg'}">${hasP?(profit>=0?'+':'')+fmtNT(profit):'—'}</span>
         </div>
         <div class="daily-diff-card ${dailyClass}">
-          <div class="daily-diff-row">
-            <div>
-              <div class="daily-diff-label">昨日收盤</div>
-              <div class="daily-diff-value">${hasDaily ? formatMarketPrice(inv, previousClose) : '—'}</div>
-            </div>
-            <div>
-              <div class="daily-diff-label">今日現價 / 收盤</div>
-              <div class="daily-diff-value">${hasP ? priceLabel : '—'}</div>
-            </div>
-          </div>
-          <div style="font-size:14px; font-weight:950; color:${dailyColor};">${dailyText}</div>
+          <span class="daily-diff-label">今日漲跌</span>
+          <span class="daily-diff-value" style="color:${dailyColor};">${dailyText}</span>
         </div>
         <div class="invest-card-actions" style="justify-content:flex-end; margin-top:10px;">
           <button onclick="openEditInvestment('${inv.id}')" class="btn-edit">編輯</button>
@@ -3231,15 +3241,47 @@ function renderMonthly() {
   const maxV = sorted[0]?.[1] || 1;
   document.getElementById('category-breakdown').innerHTML = sorted.length
     ? sorted.map(([c,v]) => `
-      <div style="margin-bottom:10px;">
+      <button onclick="openMonthlyCategoryDetail('${encodeURIComponent(c)}')" style="width:100%; margin-bottom:10px; padding:10px 12px; border-radius:12px; border:1px solid rgba(192,222,223,0.2); background:#141414; color:#f5f5f5; text-align:left; cursor:pointer;">
         <div style="display:flex; justify-content:space-between; margin-bottom:3px; font-size:13px;">
-          <span>${c}</span><span style="font-weight:600;">${fmtNT(v)}</span>
+          <span style="font-weight:900;">${safeText(c)}</span><span style="font-weight:900; color:#fbbf24;">${fmtNT(v)}</span>
         </div>
-        <div class="progress-bar"><div style="background:#818cf8; height:4px; border-radius:2px; width:${(v/maxV)*100}%;"></div></div>
-      </div>`).join('')
+        <div class="progress-bar"><div style="background:#fbbf24; height:5px; border-radius:3px; width:${(v/maxV)*100}%;"></div></div>
+        <div style="font-size:11px; color:#9ca3af; margin-top:6px;">點開看明細</div>
+      </button>`).join('')
     : '<div style="color:#49769F; text-align:center; padding:16px 0; font-size:13px;">本月無支出記錄</div>';
 
   renderSubscriptionBreakdown(txs);
+}
+
+function openMonthlyCategoryDetail(encodedCat) {
+  const cat = decodeURIComponent(encodedCat);
+  const txs = state.transactions
+    .filter(t => !isInvestmentCategory(t))
+    .filter(t => t.type === '支出')
+    .filter(t => new Date(t.date).getMonth()+1 === state.selMonth)
+    .filter(t => (t.category || '其他') === cat)
+    .sort((a,b) => (b.amount || 0) - (a.amount || 0));
+  const total = sum(txs, 'amount');
+  document.getElementById('monthly-category-title').textContent = `${cat} · ${state.selMonth}月`;
+  document.getElementById('monthly-category-detail-content').innerHTML = `
+    <div class="card" style="margin-bottom:12px;">
+      <div style="font-size:12px; color:#9ca3af; margin-bottom:4px;">本分類總支出</div>
+      <div style="font-size:28px; font-weight:950; color:#fbbf24;">${fmtNT(total)}</div>
+      <div style="font-size:12px; color:#9ca3af; margin-top:4px;">共 ${txs.length} 筆</div>
+    </div>
+    ${txs.length ? txs.map(t => `
+      <div class="card" style="margin-bottom:10px;">
+        <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start;">
+          <div>
+            <div style="font-size:14px; font-weight:950; color:#f5f5f5;">${safeText(t.note || '沒有備註')}</div>
+            <div style="font-size:12px; color:#9ca3af; margin-top:4px;">${safeText(t.date || '—')}</div>
+          </div>
+          <div style="font-size:18px; font-weight:950; color:#fb7185; white-space:nowrap;">-${fmtNT(t.amount || 0)}</div>
+        </div>
+      </div>
+    `).join('') : '<div style="color:#9ca3af; text-align:center; padding:16px 0; font-size:13px;">這個分類沒有明細</div>'}
+  `;
+  openModal('monthly-category-detail-modal');
 }
 
 function isSubscriptionTx(t) {
