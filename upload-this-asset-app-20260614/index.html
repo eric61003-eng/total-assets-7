@@ -2275,6 +2275,32 @@ async function fetchYahooRaw(sym) {
   return quotePrice || null;
 }
 
+async function fetchYahooPreviousClose(sym) {
+  const chart = await fetchPriceJson(
+    `v8/finance/chart/${encodeURIComponent(sym)}`,
+    'interval=1d&range=10d&includePrePost=false'
+  );
+  const result = chart?.chart?.result?.[0];
+  const closes = (result?.indicators?.quote?.[0]?.close || [])
+    .map(Number)
+    .filter(v => Number.isFinite(v) && v > 0);
+  if (closes.length >= 2) return closes[closes.length - 2];
+
+  const metaPrev = Number(
+    result?.meta?.regularMarketPreviousClose ??
+    result?.meta?.previousClose
+  );
+  return Number.isFinite(metaPrev) && metaPrev > 0 ? metaPrev : null;
+}
+
+async function fetchFirstPreviousClose(inv) {
+  for (const sym of yahooSymbolsFor(inv)) {
+    const prev = await fetchYahooPreviousClose(sym);
+    if (prev) return { sym, previousClose: prev };
+  }
+  return null;
+}
+
 function loadCachedPriceData() {
   try {
     return {
@@ -2358,6 +2384,16 @@ async function fetchBatchPrices(symbols) {
       changePct: Number.isFinite(changePct) ? changePct : null
     };
   });
+  const missingPrev = Object.entries(result)
+    .filter(([, info]) => !info.previousClose)
+    .map(async ([sym, info]) => {
+      const previousClose = await fetchYahooPreviousClose(sym);
+      if (!previousClose) return;
+      info.previousClose = previousClose;
+      info.change = info.price - previousClose;
+      info.changePct = previousClose ? (info.change / previousClose * 100) : null;
+    });
+  await Promise.allSettled(missingPrev);
   return result;
 }
 
@@ -2461,7 +2497,26 @@ async function fetchAllPrices() {
     await Promise.allSettled(tasks);
   }
 
-  // Step 3: If live quotes fail, keep the latest successful quote so values do not collapse to cost.
+  // Step 3: Backfill yesterday's close from Yahoo daily chart when quote data did not include it.
+  const metaTasks = priceItems.map(async inv => {
+    if (!state.prices[inv.ticker]) return;
+    const meta = state.priceMeta?.[inv.ticker] || {};
+    if (Number.isFinite(Number(meta.previousClose)) && Number(meta.previousClose) > 0) return;
+    const daily = await fetchFirstPreviousClose(inv);
+    if (!daily?.previousClose) return;
+    const previousClose = isGoldTicker(inv.ticker) ? daily.previousClose * state.usdRate / 31.1035 : daily.previousClose;
+    const price = state.prices[inv.ticker];
+    const change = price - previousClose;
+    state.priceMeta[inv.ticker] = {
+      ...meta,
+      previousClose,
+      change,
+      changePct: previousClose ? (change / previousClose * 100) : null
+    };
+  });
+  await Promise.allSettled(metaTasks);
+
+  // Step 4: If live quotes fail, keep the latest successful quote so values do not collapse to cost.
   const cached = loadCachedPriceData();
   const restoredFromCache = [];
   priceItems.forEach(inv => {
