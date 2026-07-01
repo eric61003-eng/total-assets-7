@@ -874,6 +874,7 @@
   html.privacy-mode #portfolio-total,
   html.privacy-mode #portfolio-cost,
   html.privacy-mode #portfolio-profit,
+  html.privacy-mode #portfolio-daily,
   html.privacy-mode #portfolio-realized,
   html.privacy-mode #realized-total-twd,
   html.privacy-mode #realized-this-month,
@@ -884,10 +885,12 @@
   html.privacy-mode #virtual-profit,
   html.privacy-mode #tw-val,
   html.privacy-mode #tw-pnl,
+  html.privacy-mode #tw-daily,
   html.privacy-mode #tw-cost-label,
   html.privacy-mode #tw-pct-label,
   html.privacy-mode #us-val,
   html.privacy-mode #us-pnl,
+  html.privacy-mode #us-daily,
   html.privacy-mode #us-cost-label,
   html.privacy-mode #us-pct-label,
   html.privacy-mode #filter-balance,
@@ -895,6 +898,7 @@
   html.privacy-mode #init-balance-hint,
   html.privacy-mode #category-breakdown span:last-child,
   html.privacy-mode #income-breakdown span:last-child,
+  html.privacy-mode #subscription-breakdown,
   html.privacy-mode #expense-ranking span:last-child,
   html.privacy-mode #transactions-list span:last-child,
   html.privacy-mode #transactions-list .card > div:last-child,
@@ -1428,7 +1432,7 @@ const CONFIG = {
   <button onclick="exportToExcel()" style="width:100%; background:linear-gradient(135deg,#166534,#14532d); border:1px solid rgba(74,222,128,0.3); color:#4ade80; padding:13px; border-radius:14px; cursor:pointer; font-size:14px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:8px;">
     📊 匯出 Excel 報表
   </button>
-  <div style="text-align:center; color:#315d84; font-size:10px; margin:12px 0 2px;">版面 v30 · 舊版抓價邏輯修正版</div>
+  <div style="text-align:center; color:#315d84; font-size:10px; margin:12px 0 2px;">版面 v32 · 投資今日漲跌版</div>
 </div>
 
 <!-- PAGE 2: 投資 -->
@@ -1447,7 +1451,7 @@ const CONFIG = {
     <div class="gradient-card" style="margin-bottom:14px;">
       <div style="font-size:13px; color:#6EA2B3; margin-bottom:4px;">投資組合總值</div>
       <div id="portfolio-total" style="font-size:32px; font-weight:800; letter-spacing:-1px;">NT$ —</div>
-      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:12px;">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px;">
         <div>
           <div style="font-size:10px; color:#6EA2B3;">投入資金</div>
           <div id="portfolio-cost" style="font-size:13px; font-weight:700; margin-top:2px; color:#e2e8f0;">—</div>
@@ -1455,6 +1459,10 @@ const CONFIG = {
         <div>
           <div style="font-size:10px; color:#6EA2B3;">未實現損益</div>
           <div id="portfolio-profit" style="font-size:13px; font-weight:700; margin-top:2px;">—</div>
+        </div>
+        <div>
+          <div style="font-size:10px; color:#6EA2B3;">今日漲跌</div>
+          <div id="portfolio-daily" style="font-size:13px; font-weight:900; margin-top:2px;">—</div>
         </div>
         <div>
           <div style="font-size:10px; color:#6EA2B3;">已實現損益</div>
@@ -1481,6 +1489,7 @@ const CONFIG = {
         <div class="market-badge">🇹🇼 台股</div>
         <div id="tw-val"  style="font-size:22px; font-weight:950; color:#f8fafc; letter-spacing:0;">—</div>
         <div id="tw-pnl"  style="font-size:12px; font-weight:700; margin-top:3px;">—</div>
+        <div id="tw-daily" style="font-size:12px; font-weight:900; margin-top:3px;">今日 —</div>
         <div style="margin-top:10px; border-top:1px solid rgba(125,189,232,0.1); padding-top:8px;">
           <div style="display:flex; justify-content:space-between; font-size:10px; color:#6EA2B3; margin-bottom:2px;">
             <span>成本</span><span id="tw-cost-label">—</span>
@@ -1492,6 +1501,7 @@ const CONFIG = {
         <div class="market-badge">🇺🇸 美股</div>
         <div id="us-val"  style="font-size:22px; font-weight:950; color:#f8fafc; letter-spacing:0;">—</div>
         <div id="us-pnl"  style="font-size:12px; font-weight:700; margin-top:3px;">—</div>
+        <div id="us-daily" style="font-size:12px; font-weight:900; margin-top:3px;">今日 —</div>
         <div style="margin-top:10px; border-top:1px solid rgba(125,189,232,0.1); padding-top:8px;">
           <div style="display:flex; justify-content:space-between; font-size:10px; color:#6EA2B3; margin-bottom:2px;">
             <span>成本</span><span id="us-cost-label">—</span>
@@ -1612,9 +1622,16 @@ const CONFIG = {
   </div>
 
   <!-- 分類細項 -->
-  <div class="card">
+  <div class="card" style="margin-bottom:14px;">
     <div style="font-size:14px; font-weight:700; margin-bottom:12px;">支出分類明細</div>
     <div id="category-breakdown"></div>
+  </div>
+
+  <!-- 訂閱 / 固定費用分析 -->
+  <div class="card">
+    <div style="font-size:14px; font-weight:700; margin-bottom:4px;">訂閱 / 固定費用分析</div>
+    <div style="font-size:11px; color:#9ca3af; margin-bottom:12px;">依照分類與備註自動整理，可點進去看明細</div>
+    <div id="subscription-breakdown"></div>
   </div>
 </div>
 
@@ -2058,6 +2075,19 @@ const CONFIG = {
       <textarea id="cashflow-export-text" readonly rows="16" style="font-size:13px; line-height:1.5; white-space:pre-wrap;"></textarea>
       <button onclick="copyCashflowExport()" class="btn-primary" style="margin-top:4px;">複製給 AI</button>
     </div>
+  </div>
+</div>
+
+<!-- ========================================================
+     MODAL: 訂閱明細
+======================================================== -->
+<div id="subscription-detail-modal" class="modal-overlay" onclick="backdropClose(event,'subscription-detail-modal')">
+  <div class="modal-sheet">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+      <div style="font-size:18px; font-weight:800;">訂閱明細</div>
+      <button onclick="closeModal('subscription-detail-modal')" style="background:rgba(10,65,116,0.7); border:1px solid rgba(125,189,232,0.15); color:#BDD8E9; width:32px; height:32px; border-radius:8px; cursor:pointer; font-size:16px; line-height:1;">✕</button>
+    </div>
+    <div id="subscription-detail-content"></div>
   </div>
 </div>
 
@@ -2995,6 +3025,8 @@ function renderInvestments() {
   const us = applyProfitSort(state.investments.filter(i=>i.market==='美股'));
   let totalVal=0, totalCost=0, totalProfit=0;
   let twVal=0, twCost=0, usVal=0, usCost=0;
+  let totalDaily=0, twDaily=0, usDaily=0;
+  let dailyCount=0, twDailyCount=0, usDailyCount=0;
 
   // Realized P&L from transactions (category=投資收入)
   const realizedTotal = sum(state.transactions.filter(t=>t.type==='收入'&&t.category==='投資收入'), 'amount')
@@ -3004,8 +3036,19 @@ function renderInvestments() {
     const { isTW, hasP, price, previousClose, valTWD, costTWD, profit, pct, dailyChange, dailyPct } = getInvestmentMetrics(inv);
     totalVal  += valTWD; totalCost  += costTWD;
     totalProfit += profit;
-    if (isTW) { twVal += valTWD; twCost += costTWD; }
-    else       { usVal += valTWD; usCost += costTWD; }
+    const dailyValue = hasP && previousClose ? (price - previousClose) * inv.quantity * (isTW ? (inv.lot_multiplier ?? 1000) : 1) * (isTW ? 1 : state.usdRate) : 0;
+    if (hasP && previousClose) {
+      totalDaily += dailyValue;
+      dailyCount += 1;
+    }
+    if (isTW) {
+      twVal += valTWD; twCost += costTWD;
+      if (hasP && previousClose) { twDaily += dailyValue; twDailyCount += 1; }
+    }
+    else {
+      usVal += valTWD; usCost += costTWD;
+      if (hasP && previousClose) { usDaily += dailyValue; usDailyCount += 1; }
+    }
 
     const qtyLabel   = isTW ? '張' : '股';
     const priceLabel = formatMarketPrice(inv, price);
@@ -3098,12 +3141,17 @@ function renderInvestments() {
   const realEl = document.getElementById('portfolio-realized');
   realEl.textContent = (realizedTotal>=0?'+':'')+fmtNT(realizedTotal);
   realEl.style.color = realizedTotal>=0?'#34d399':'#fb7185';
+  const dailyEl = document.getElementById('portfolio-daily');
+  if (dailyEl) {
+    dailyEl.textContent = dailyCount ? `${totalDaily>=0?'▲ +':'▼ '}${fmtNT(Math.abs(totalDaily))}` : '等待股價';
+    dailyEl.style.color = totalDaily >= 0 ? '#34d399' : '#fb7185';
+  }
 
   // Summary cards: TW vs US
   const twProfit = twVal - twCost;
   const usProfit = usVal - usCost;
 
-  const fillCard = (prefix, val, cost, profit, color) => {
+  const fillCard = (prefix, val, cost, profit, daily, count, color) => {
     const pct = cost > 0 ? (profit / cost * 100) : 0;
 
     const valEl = document.getElementById(prefix+'-val');
@@ -3123,10 +3171,16 @@ function renderInvestments() {
       pctEl.textContent = (pct>=0?'+':'') + pct.toFixed(1) + '%';
       pctEl.style.color = pct >= 0 ? color : '#fb7185';
     }
+
+    const dailyEl = document.getElementById(prefix+'-daily');
+    if (dailyEl) {
+      dailyEl.textContent = count ? `今日 ${daily>=0?'▲ +':'▼ '}${fmtNT(Math.abs(daily))}` : '今日 等待股價';
+      dailyEl.style.color = daily >= 0 ? '#34d399' : '#fb7185';
+    }
   };
 
-  fillCard('tw', twVal, twCost, twProfit, '#34d399');
-  fillCard('us', usVal, usCost, usProfit, '#34d399');
+  fillCard('tw', twVal, twCost, twProfit, twDaily, twDailyCount, '#34d399');
+  fillCard('us', usVal, usCost, usProfit, usDaily, usDailyCount, '#34d399');
 }
 
 // ── Render: Monthly ───────────────────────────────────────
@@ -3184,6 +3238,91 @@ function renderMonthly() {
         <div class="progress-bar"><div style="background:#818cf8; height:4px; border-radius:2px; width:${(v/maxV)*100}%;"></div></div>
       </div>`).join('')
     : '<div style="color:#49769F; text-align:center; padding:16px 0; font-size:13px;">本月無支出記錄</div>';
+
+  renderSubscriptionBreakdown(txs);
+}
+
+function isSubscriptionTx(t) {
+  const text = `${t.category || ''} ${t.note || ''}`.toLowerCase();
+  const keys = ['訂閱','月費','年費','會員','subscription','netflix','spotify','youtube','chatgpt','claude','openai','icloud','google','apple','adobe','canva','notion','figma','github','vercel'];
+  return t.type === '支出' && keys.some(k => text.includes(k.toLowerCase()));
+}
+
+function getSubscriptionTxs(txs) {
+  return txs.filter(isSubscriptionTx).sort((a,b) => (b.amount || 0) - (a.amount || 0));
+}
+
+function renderSubscriptionBreakdown(txs) {
+  const subs = getSubscriptionTxs(txs);
+  const el = document.getElementById('subscription-breakdown');
+  if (!el) return;
+  if (!subs.length) {
+    el.innerHTML = '<div style="color:#9ca3af; text-align:center; padding:16px 0; font-size:13px;">本月沒有抓到訂閱或固定費用</div>';
+    return;
+  }
+  const total = sum(subs, 'amount');
+  const maxV = subs[0]?.amount || 1;
+  el.innerHTML = `
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:12px;">
+      <div>
+        <div style="font-size:11px; color:#9ca3af;">本月訂閱 / 固定費</div>
+        <div style="font-size:22px; font-weight:950; color:#f5f5f5;">${fmtNT(total)}</div>
+      </div>
+      <div style="font-size:12px; color:#9ca3af; font-weight:800;">${subs.length} 筆</div>
+    </div>
+    ${subs.map(t => {
+      const note = t.note || '無備註';
+      const safeId = String(t.id).replace(/'/g, "\\'");
+      return `
+        <button onclick="openSubscriptionDetail('${safeId}')" style="width:100%; text-align:left; border:1px solid #3a3a3a; background:#151515; color:#f5f5f5; border-radius:12px; padding:11px 12px; margin-bottom:8px; cursor:pointer;">
+          <div style="display:flex; justify-content:space-between; gap:10px; align-items:flex-start;">
+            <div style="min-width:0;">
+              <div style="font-size:14px; font-weight:950; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${note}</div>
+              <div style="font-size:11px; color:#9ca3af; margin-top:2px;">${fmtDate(t.date)} · ${t.category || '未分類'}</div>
+            </div>
+            <div style="font-size:14px; font-weight:950; color:#fbbf24; flex-shrink:0;">${fmtNT(t.amount || 0)}</div>
+          </div>
+          <div class="progress-bar" style="margin-top:8px;"><div style="height:5px; width:${((t.amount || 0) / maxV) * 100}%;"></div></div>
+        </button>`;
+    }).join('')}
+  `;
+}
+
+function openSubscriptionDetail(id) {
+  const t = state.transactions.find(x => String(x.id) === String(id));
+  if (!t) return;
+  const content = document.getElementById('subscription-detail-content');
+  if (content) {
+    content.innerHTML = `
+      <div class="card" style="margin-bottom:12px;">
+        <div style="font-size:12px; color:#9ca3af; margin-bottom:4px;">項目</div>
+        <div style="font-size:18px; font-weight:950;">${t.note || t.category || '未命名訂閱'}</div>
+      </div>
+      <div class="card" style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+        <div>
+          <div style="font-size:11px; color:#9ca3af;">金額</div>
+          <div style="font-size:18px; font-weight:950; color:#fbbf24;">${fmtNT(t.amount || 0)}</div>
+        </div>
+        <div>
+          <div style="font-size:11px; color:#9ca3af;">日期</div>
+          <div style="font-size:18px; font-weight:950;">${t.date || '—'}</div>
+        </div>
+        <div>
+          <div style="font-size:11px; color:#9ca3af;">分類</div>
+          <div style="font-size:16px; font-weight:900;">${t.category || '—'}</div>
+        </div>
+        <div>
+          <div style="font-size:11px; color:#9ca3af;">類型</div>
+          <div style="font-size:16px; font-weight:900;">${t.type || '—'}</div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="font-size:12px; color:#9ca3af; margin-bottom:6px;">備註</div>
+        <div style="font-size:14px; font-weight:800; line-height:1.5;">${t.note || '沒有備註'}</div>
+      </div>
+    `;
+  }
+  openModal('subscription-detail-modal');
 }
 
 // ── Render: Records ───────────────────────────────────────
@@ -3808,6 +3947,25 @@ function formatTopCategories(items, emptyText='無資料') {
   return sorted.map(([name, amount], idx) => `${idx + 1}. ${name} ${fmtNT(amount)}`).join('\n');
 }
 
+function formatNoteHighlights(txs, emptyText='本期間沒有備註重點') {
+  const rows = txs
+    .filter(t => t.note && String(t.note).trim())
+    .sort((a,b)=>(b.amount||0)-(a.amount||0))
+    .slice(0,8);
+  if (!rows.length) return emptyText;
+  return rows.map((t, idx) => `${idx + 1}. ${fmtDate(t.date)} ${t.category || '未分類'} ${fmtNT(t.amount || 0)}：${t.note}`).join('\n');
+}
+
+function formatSubscriptionLines(txs, emptyText='本期間沒有訂閱 / 固定費用') {
+  const subs = getSubscriptionTxs(txs);
+  if (!subs.length) return emptyText;
+  const total = sum(subs, 'amount');
+  return [
+    `訂閱 / 固定費總額：${fmtNT(total)}，共 ${subs.length} 筆`,
+    ...subs.slice(0,8).map((t, idx) => `${idx + 1}. ${t.note || t.category || '未命名'}：${fmtNT(t.amount || 0)}（${fmtDate(t.date)}）`)
+  ].join('\n');
+}
+
 function getInvestmentSummary(market='all') {
   const list = state.investments.filter(inv => market === 'all' || inv.market === market);
   let value = 0, cost = 0, profit = 0;
@@ -3857,6 +4015,7 @@ function generateCashflowExport() {
   const balance = income - expense;
   const incomeCats = groupSum(selectedTxs.filter(t=>t.type==='收入'));
   const expenseCats = groupSum(selectedTxs.filter(t=>t.type==='支出'));
+  const expenseTxs = selectedTxs.filter(t=>t.type==='支出');
   const cash = getCashBalance();
   const allInv = getInvestmentSummary('all');
   const twInv = getInvestmentSummary('台股');
@@ -3866,10 +4025,11 @@ function generateCashflowExport() {
 
   const baseHeader = [
     '請你扮演我的財務分析助理，根據下面資料幫我分析：',
-    '1. 現金流是否健康',
-    '2. 哪些支出需要注意',
-    '3. 投資風險和集中度',
-    '4. 下個月可以怎麼調整',
+    '1. 先用一小段話說明我這個月的總花費狀況，不要只列數字',
+    '2. 根據備註內容特別強調值得注意的花費原因',
+    '3. 判斷現金流是否健康，哪些支出需要注意',
+    '4. 分析投資風險和集中度',
+    '5. 給下個月可以具體調整的建議',
     '',
     `資料期間：${label}`,
     `匯出時間：${new Date().toLocaleString('zh-TW')}`,
@@ -3884,6 +4044,7 @@ function generateCashflowExport() {
       moneyLine('本期間收入', income),
       moneyLine('本期間支出', expense),
       signedMoneyLine('本期間結餘', balance),
+      `本期間支出筆數：${expenseTxs.length}`,
       moneyLine('投資市值', allInv.value),
       signedMoneyLine('投資未實現損益', allInv.profit),
       moneyLine('待收代墊 / 欠款', debtTotal),
@@ -3893,6 +4054,12 @@ function generateCashflowExport() {
       '',
       '【支出分類排行】',
       formatTopCategories(expenseCats, '本期間無支出'),
+      '',
+      '【備註重點，請特別看這段判斷花費原因】',
+      formatNoteHighlights(expenseTxs),
+      '',
+      '【訂閱 / 固定費用分析】',
+      formatSubscriptionLines(selectedTxs),
       '',
       buildInvestmentLines('投資總覽', 'all')
     ];
