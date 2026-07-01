@@ -2438,8 +2438,8 @@ async function fetchAllPrices() {
       state.prices[entry.ticker] = price * state.usdRate / 31.1035;
       state.priceMeta[entry.ticker] = {
         previousClose: prev ? prev * state.usdRate / 31.1035 : null,
-        change: info.change ? info.change * state.usdRate / 31.1035 : null,
-        changePct: info.changePct || null
+        change: info.change != null ? info.change * state.usdRate / 31.1035 : null,
+        changePct: info.changePct != null ? info.changePct : null
       };
     } else {
       state.prices[entry.ticker] = price;
@@ -3039,6 +3039,15 @@ function formatMarketPrice(inv, price) {
     : `$${Number(price).toFixed(2)} (NT$${Math.round(price * state.usdRate).toLocaleString('zh-TW')})`;
 }
 
+function formatMarketChange(inv, change) {
+  if (!Number.isFinite(change)) return '—';
+  const sign = change >= 0 ? '+' : '-';
+  const abs = Math.abs(change);
+  return inv.market === '台股'
+    ? `${sign}NT$ ${abs.toLocaleString('zh-TW', { maximumFractionDigits: 2 })}`
+    : `${sign}$${abs.toFixed(2)}`;
+}
+
 function toggleInvestmentProfitRank() {
   state.investSortMode = state.investSortMode === 'profit-desc' ? 'profit-asc' : 'profit-desc';
   renderInvestments();
@@ -3093,12 +3102,16 @@ function renderInvestments() {
                              : `NT$ ${Math.round(valTWD).toLocaleString()} <span style="font-size:11px;color:#6EA2B3;">($${(price*inv.quantity).toFixed(0)})</span>`;
     const costLabel  = isTW ? fmtNT(costTWD)
                              : `NT$ ${Math.round(costTWD).toLocaleString()} <span style="font-size:11px;color:#6EA2B3;">($${(inv.avg_price*inv.quantity).toFixed(0)})</span>`;
-    const hasDaily = hasP && Number.isFinite(dailyPct);
-    const dailyClass = hasDaily && dailyPct < 0 ? 'is-neg' : 'is-pos';
-    const dailyText = hasDaily
-      ? `${dailyPct >= 0 ? '▲ +' : '▼ '}${Math.abs(dailyPct).toFixed(2)}%`
-      : '等待資料';
-    const dailyColor = hasDaily && dailyPct < 0 ? '#fb7185' : '#34d399';
+    const hasDailyChange = hasP && Number.isFinite(dailyChange);
+    const hasDailyPct = hasP && Number.isFinite(dailyPct);
+    const hasDaily = hasDailyChange || hasDailyPct;
+    const dailyUp = hasDailyChange ? dailyChange >= 0 : dailyPct >= 0;
+    const dailyClass = hasDaily && !dailyUp ? 'is-neg' : 'is-pos';
+    const dailyParts = [];
+    if (hasDailyChange) dailyParts.push(`較昨收 ${formatMarketChange(inv, dailyChange)}`);
+    if (hasDailyPct) dailyParts.push(`${dailyUp ? '▲ +' : '▼ '}${Math.abs(dailyPct).toFixed(2)}%`);
+    const dailyText = hasDaily ? dailyParts.join(' · ') : '等待昨收資料';
+    const dailyColor = hasDaily && !dailyUp ? '#fb7185' : '#34d399';
 
     return `
     <div class="card card-animated" style="margin-bottom:10px; animation-delay:${idx*60}ms;">
