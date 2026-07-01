@@ -3094,15 +3094,6 @@ function formatMarketPrice(inv, price) {
     : `$${Number(price).toFixed(2)} (NT$${Math.round(price * state.usdRate).toLocaleString('zh-TW')})`;
 }
 
-function formatMarketChange(inv, change) {
-  if (!Number.isFinite(change)) return '—';
-  const sign = change >= 0 ? '+' : '-';
-  const abs = Math.abs(change);
-  return inv.market === '台股'
-    ? `${sign}NT$ ${abs.toLocaleString('zh-TW', { maximumFractionDigits: 2 })}`
-    : `${sign}$${abs.toFixed(2)}`;
-}
-
 function toggleInvestmentProfitRank() {
   state.investSortMode = state.investSortMode === 'profit-desc' ? 'profit-asc' : 'profit-desc';
   renderInvestments();
@@ -3157,15 +3148,12 @@ function renderInvestments() {
                              : `NT$ ${Math.round(valTWD).toLocaleString()} <span style="font-size:11px;color:#6EA2B3;">($${(price*inv.quantity).toFixed(0)})</span>`;
     const costLabel  = isTW ? fmtNT(costTWD)
                              : `NT$ ${Math.round(costTWD).toLocaleString()} <span style="font-size:11px;color:#6EA2B3;">($${(inv.avg_price*inv.quantity).toFixed(0)})</span>`;
-    const hasDailyChange = hasP && Number.isFinite(dailyChange);
     const hasDailyPct = hasP && Number.isFinite(dailyPct);
-    const hasDaily = hasDailyChange || hasDailyPct;
-    const dailyUp = hasDailyChange ? dailyChange >= 0 : dailyPct >= 0;
+    const hasDaily = hasDailyPct;
+    const dailyUp = hasDaily && dailyPct >= 0;
     const dailyClass = hasDaily && !dailyUp ? 'is-neg' : 'is-pos';
-    const dailyParts = [];
-    if (hasDailyChange) dailyParts.push(`較昨收 ${formatMarketChange(inv, dailyChange)}`);
-    if (hasDailyPct) dailyParts.push(`${dailyUp ? '▲ +' : '▼ '}${Math.abs(dailyPct).toFixed(2)}%`);
-    const dailyText = hasDaily ? dailyParts.join(' · ') : '等待昨收資料';
+    const dailyWord = hasDaily && dailyPct === 0 ? '持平' : (dailyUp ? '上漲' : '下跌');
+    const dailyText = hasDaily ? `${dailyWord} ${Math.abs(dailyPct).toFixed(2)}%` : '等待昨收資料';
     const dailyColor = hasDaily && !dailyUp ? '#fb7185' : '#34d399';
 
     return `
@@ -3194,8 +3182,7 @@ function renderInvestments() {
           <span class="value ${profit>=0?'profit-pos':'profit-neg'}">${hasP?(profit>=0?'+':'')+fmtNT(profit):'—'}</span>
         </div>
         <div class="daily-diff-card ${dailyClass}">
-          <span class="daily-diff-label">最後價 ${hasP ? priceLabel : '—'}</span>
-          <span class="daily-diff-value" style="color:${dailyColor};">${dailyText}</span>
+          <span class="daily-diff-value" style="color:${dailyColor}; width:100%; text-align:right;">${dailyText}</span>
         </div>
         <div class="invest-card-actions" style="justify-content:flex-end; margin-top:10px;">
           <button onclick="openEditInvestment('${inv.id}')" class="btn-edit">編輯</button>
