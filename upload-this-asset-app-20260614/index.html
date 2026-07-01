@@ -1108,6 +1108,19 @@
     color:#8bd3dd;
     border-color:#2f5b61;
   }
+  .market-daily-highlight {
+    display:inline-flex;
+    align-items:center;
+    width:max-content;
+    max-width:100%;
+    margin-top:7px !important;
+    padding:5px 8px;
+    border-radius:10px;
+    border:1px solid currentColor;
+    background:rgba(255,255,255,0.04);
+    font-size:13px !important;
+    font-weight:950 !important;
+  }
   .unrealized-highlight {
     margin-top:8px;
     padding:11px 12px;
@@ -1495,7 +1508,7 @@ const CONFIG = {
         <div class="market-badge">🇹🇼 台股</div>
         <div id="tw-val"  style="font-size:22px; font-weight:950; color:#f8fafc; letter-spacing:0;">—</div>
         <div id="tw-pnl"  style="font-size:12px; font-weight:700; margin-top:3px;">—</div>
-        <div id="tw-daily" style="font-size:12px; font-weight:900; margin-top:3px;">今日 —</div>
+        <div id="tw-daily" class="market-daily-highlight">今日 —</div>
         <div style="margin-top:10px; border-top:1px solid rgba(125,189,232,0.1); padding-top:8px;">
           <div style="display:flex; justify-content:space-between; font-size:10px; color:#6EA2B3; margin-bottom:2px;">
             <span>成本</span><span id="tw-cost-label">—</span>
@@ -1507,7 +1520,7 @@ const CONFIG = {
         <div class="market-badge">🇺🇸 美股</div>
         <div id="us-val"  style="font-size:22px; font-weight:950; color:#f8fafc; letter-spacing:0;">—</div>
         <div id="us-pnl"  style="font-size:12px; font-weight:700; margin-top:3px;">—</div>
-        <div id="us-daily" style="font-size:12px; font-weight:900; margin-top:3px;">今日 —</div>
+        <div id="us-daily" class="market-daily-highlight">今日 —</div>
         <div style="margin-top:10px; border-top:1px solid rgba(125,189,232,0.1); padding-top:8px;">
           <div style="display:flex; justify-content:space-between; font-size:10px; color:#6EA2B3; margin-bottom:2px;">
             <span>成本</span><span id="us-cost-label">—</span>
@@ -3232,7 +3245,7 @@ function renderInvestments() {
   realEl.style.color = realizedTotal>=0?'#34d399':'#fb7185';
   const dailyEl = document.getElementById('portfolio-daily');
   if (dailyEl) {
-    dailyEl.textContent = dailyCount ? `${totalDaily>=0?'▲ +':'▼ '}${fmtNT(Math.abs(totalDaily))}` : '等待股價';
+      dailyEl.textContent = dailyCount ? `${totalDaily>=0?'▲ +':'▼ '}${fmtNT(Math.abs(totalDaily))}` : '等待股價';
     dailyEl.style.color = totalDaily >= 0 ? '#34d399' : '#fb7185';
   }
 
@@ -3263,7 +3276,9 @@ function renderInvestments() {
 
     const dailyEl = document.getElementById(prefix+'-daily');
     if (dailyEl) {
-      dailyEl.textContent = count ? `今日 ${daily>=0?'▲ +':'▼ '}${fmtNT(Math.abs(daily))}` : '今日 等待股價';
+      dailyEl.textContent = count
+        ? `${daily>=0?'▲ 與昨日相比多 ':'▼ 與昨日相比少 '}${fmtNT(Math.abs(daily))}`
+        : '今日 等待股價';
       dailyEl.style.color = daily >= 0 ? '#34d399' : '#fb7185';
     }
   };
