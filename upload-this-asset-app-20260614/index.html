@@ -902,12 +902,13 @@
   html.privacy-mode #expense-ranking span:last-child,
   html.privacy-mode #transactions-list span:last-child,
   html.privacy-mode #transactions-list .card > div:last-child,
-  html.privacy-mode #tw-stocks-list .card,
-  html.privacy-mode #us-stocks-list .card,
-  html.privacy-mode #virtual-list .card,
   html.privacy-mode #realized-gains-list .card,
   html.privacy-mode #debts-list .card,
   html.privacy-mode #debt-collected-list .card {
+    filter:blur(8px) !important;
+    user-select:none;
+  }
+  html.privacy-mode .privacy-number {
     filter:blur(8px) !important;
     user-select:none;
   }
@@ -3019,17 +3020,17 @@ function renderVirtualInvestments() {
             <div style="font-size:12px; color:#9ca3af; margin-top:2px;">${v.market} · ${v.ticker} · ${v.quantity} ${isTW?'張':'股'}</div>
           </div>
           <div style="text-align:right;">
-            <div class="invest-money" style="font-size:16px; font-weight:950;">${fmtNT(val)}</div>
-            <div class="${profit>=0?'profit-pos':'profit-neg'}" style="font-size:13px; margin-top:3px;">${profit>=0?'▲':'▼'} ${Math.abs(pct).toFixed(1)}%</div>
+            <div class="invest-money privacy-number" style="font-size:16px; font-weight:950;">${fmtNT(val)}</div>
+            <div class="privacy-number ${profit>=0?'profit-pos':'profit-neg'}" style="font-size:13px; margin-top:3px;">${profit>=0?'▲':'▼'} ${Math.abs(pct).toFixed(1)}%</div>
           </div>
         </div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px; padding-top:10px; border-top:1px solid #3a3a3a;">
-          <div><div style="font-size:11px; color:#9ca3af;">買入價</div><div style="font-weight:900;">${buyLabel}</div></div>
-          <div><div style="font-size:11px; color:#9ca3af;">現價</div><div style="font-weight:900;">${hasP ? priceLabel : '等待股價'}</div></div>
+          <div><div style="font-size:11px; color:#9ca3af;">買入價</div><div class="privacy-number" style="font-weight:900;">${buyLabel}</div></div>
+          <div><div style="font-size:11px; color:#9ca3af;">現價</div><div class="${hasP ? 'privacy-number' : ''}" style="font-weight:900;">${hasP ? priceLabel : '等待股價'}</div></div>
         </div>
         <div class="unrealized-highlight ${profit>=0?'is-pos':'is-neg'}">
           <span class="label">練習損益</span>
-          <span class="value ${profit>=0?'profit-pos':'profit-neg'}">${profit>=0?'+':''}${fmtNT(profit)}</span>
+          <span class="value privacy-number ${profit>=0?'profit-pos':'profit-neg'}">${profit>=0?'+':''}${fmtNT(profit)}</span>
         </div>
         <div style="display:flex; justify-content:flex-end; margin-top:10px;">
           <button onclick="deleteVirtualInvestment('${v.id}')" class="btn-danger">刪除</button>
@@ -3164,25 +3165,25 @@ function renderInvestments() {
           <div style="font-size:12px; color:#49769F; margin-top:2px;">${inv.ticker} · ${inv.quantity} ${qtyLabel}</div>
         </div>
         <div style="text-align:right;">
-          <div class="invest-money" style="font-size:16px; font-weight:900;">${valLabel}</div>
-          <div class="${pct>=0?'profit-pos':'profit-neg'}" style="font-size:13px; margin-top:3px;">${hasP?(pct>=0?'▲':'▼')+Math.abs(pct).toFixed(1)+'%':'—'}</div>
+          <div class="invest-money privacy-number" style="font-size:16px; font-weight:900;">${valLabel}</div>
+          <div class="privacy-number ${pct>=0?'profit-pos':'profit-neg'}" style="font-size:13px; margin-top:3px;">${hasP?(pct>=0?'▲':'▼')+Math.abs(pct).toFixed(1)+'%':'—'}</div>
         </div>
       </div>
       <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; padding-top:8px; border-top:1px solid rgba(125,189,232,0.1); font-size:11px; margin-bottom:8px;">
         <div>
           <div style="color:#49769F; margin-bottom:2px;">現價</div>
-          <div>${hasP ? priceLabel : `<button onclick="setManualPrice('${inv.ticker}')" style="background:rgba(10,65,116,0.6);color:#7BBDE8;border:1px solid rgba(125,189,232,0.2);padding:3px 7px;border-radius:6px;font-size:11px;cursor:pointer;">✏ 輸入現價</button>`}</div>
+          <div class="${hasP ? 'privacy-number' : ''}">${hasP ? priceLabel : `<button onclick="setManualPrice('${inv.ticker}')" style="background:rgba(10,65,116,0.6);color:#7BBDE8;border:1px solid rgba(125,189,232,0.2);padding:3px 7px;border-radius:6px;font-size:11px;cursor:pointer;">✏ 輸入現價</button>`}</div>
         </div>
-        <div><div style="color:#49769F; margin-bottom:2px;">均價</div><div>${avgLabel}</div></div>
-        <div><div style="color:#49769F; margin-bottom:2px;">投入資金</div><div>${costLabel}</div></div>
+        <div><div style="color:#49769F; margin-bottom:2px;">均價</div><div class="privacy-number">${avgLabel}</div></div>
+        <div><div style="color:#49769F; margin-bottom:2px;">投入資金</div><div class="privacy-number">${costLabel}</div></div>
       </div>
       <div style="padding-top:6px; border-top:1px solid rgba(125,189,232,0.1);">
         <div class="unrealized-highlight ${profit>=0?'is-pos':'is-neg'}">
           <span class="label">未實現</span>
-          <span class="value ${profit>=0?'profit-pos':'profit-neg'}">${hasP?(profit>=0?'+':'')+fmtNT(profit):'—'}</span>
+          <span class="value privacy-number ${profit>=0?'profit-pos':'profit-neg'}">${hasP?(profit>=0?'+':'')+fmtNT(profit):'—'}</span>
         </div>
         <div class="daily-diff-card ${dailyClass}">
-          <span class="daily-diff-value" style="color:${dailyColor}; width:100%; text-align:right;">${dailyText}</span>
+          <span class="daily-diff-value privacy-number" style="color:${dailyColor}; width:100%; text-align:right;">${dailyText}</span>
         </div>
         <div class="invest-card-actions" style="justify-content:flex-end; margin-top:10px;">
           <button onclick="openEditInvestment('${inv.id}')" class="btn-edit">編輯</button>
