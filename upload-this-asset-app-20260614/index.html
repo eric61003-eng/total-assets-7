@@ -1524,9 +1524,6 @@ const CONFIG = {
       <div id="us-stocks-list" style="margin-bottom:10px;"></div>
     </div>
 
-    <button onclick="openHoldingAdjustModal()" style="background:none; border:1.5px dashed rgba(125,189,232,0.2); color:#49769F; padding:14px; border-radius:14px; width:100%; cursor:pointer; font-size:14px; margin-bottom:20px;">
-      + 持倉調整
-    </button>
   </div>
 
   <!-- ── 虛擬投資 tab ── -->
@@ -1625,12 +1622,6 @@ const CONFIG = {
     <div id="category-breakdown"></div>
   </div>
 
-  <!-- 訂閱 / 學習費用分析 -->
-  <div class="card">
-    <div style="font-size:14px; font-weight:700; margin-bottom:4px;">訂閱 / 學習費用分析</div>
-    <div style="font-size:11px; color:#9ca3af; margin-bottom:12px;">依照分類與備註自動整理訂閱、課程與學習工具</div>
-    <div id="subscription-breakdown"></div>
-  </div>
 </div>
 
 <!-- PAGE 4: 記帳 -->
@@ -1694,7 +1685,7 @@ const CONFIG = {
 <div id="transaction-modal" class="modal-overlay" onclick="backdropClose(event,'transaction-modal')">
   <div class="modal-sheet">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-      <div style="font-size:18px; font-weight:700;">新增記帳</div>
+      <div id="transaction-modal-title" style="font-size:18px; font-weight:700;">新增記帳</div>
       <button onclick="closeModal('transaction-modal')" style="background:rgba(10,65,116,0.7); border:1px solid rgba(125,189,232,0.15); color:#BDD8E9; width:32px; height:32px; border-radius:8px; cursor:pointer; font-size:16px; line-height:1;">✕</button>
     </div>
 
@@ -1721,7 +1712,7 @@ const CONFIG = {
         <label style="font-size:12px; color:#6EA2B3; display:block; margin-bottom:5px;">備註（選填）</label>
         <input type="text" id="tx-note" placeholder="e.g. 超市採購">
       </div>
-      <button onclick="saveTransaction()" class="btn-primary" style="margin-top:4px;">儲存</button>
+      <button id="transaction-save-btn" onclick="saveTransaction()" class="btn-primary" style="margin-top:4px;">儲存</button>
     </div>
   </div>
 </div>
@@ -2128,6 +2119,7 @@ let state = {
   privacyMode: false,
   marketSection: 'tw',
   investSortMode: 'profit-desc',
+  editingTxId: null,
 };
 
 const SUBSCRIPTION_LEARNING_CAT = '訂閱 / 學習';
@@ -3208,7 +3200,7 @@ function renderInvestments() {
     noteEl.style.display = target ? 'block' : 'none';
     noteEl.className = 'profit-rank-note';
     noteEl.innerHTML = target
-      ? `${state.investSortMode === 'profit-desc' ? '目前利潤最高' : '目前利潤最低'}：<strong>${target.inv.name}</strong>，未實現 ${target.profit >= 0 ? '+' : ''}${fmtNT(target.profit)}`
+      ? `${state.investSortMode === 'profit-desc' ? '目前利潤最高' : '目前利潤最低'}：<strong>${target.inv.name}</strong>，未實現 <span class="privacy-number">${target.profit >= 0 ? '+' : ''}${fmtNT(target.profit)}</span>`
       : '';
   }
   setText('tw-count-label', `${tw.length} 檔`);
@@ -3322,7 +3314,6 @@ function renderMonthly() {
       </button>`).join('')
     : '<div style="color:#49769F; text-align:center; padding:16px 0; font-size:13px;">本月無支出記錄</div>';
 
-  renderSubscriptionBreakdown(txs);
 }
 
 function openMonthlyCategoryDetail(encodedCat) {
@@ -3491,7 +3482,7 @@ function renderRecords() {
         <span style="font-size:12px; color:${dayBal>=0?'#4ade80':'#f87171'};">${dayBal>=0?'+':''}${fmtNT(dayBal)}</span>
       </div>
       ${g.map(t => `
-      <div class="card" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; padding:12px 14px;">
+      <div class="card" onclick="openEditTransaction('${String(t.id).replace(/'/g, "\\'")}')" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; padding:12px 14px; cursor:pointer;">
         <div>
         <div style="font-size:14px; font-weight:600;">${normalizeCategory(t.category)}</div>
           ${t.note?`<div style="font-size:12px; color:#49769F; margin-top:2px;">${t.note}</div>`:''}
@@ -3500,7 +3491,8 @@ function renderRecords() {
           <div>
             <div style="font-size:15px; font-weight:700; color:${t.type==='收入'?'#4ade80':'#f87171'};">${t.type==='收入'?'+':'-'}${fmtNT(t.amount)}</div>
           </div>
-          <button onclick="deleteTx('${t.id}')" class="btn-danger" style="padding:6px 8px; font-size:11px;">✕</button>
+          <button onclick="event.stopPropagation(); openEditTransaction('${String(t.id).replace(/'/g, "\\'")}')" class="btn-edit" style="padding:6px 8px; font-size:11px;">編輯</button>
+          <button onclick="event.stopPropagation(); deleteTx('${String(t.id).replace(/'/g, "\\'")}')" class="btn-danger" style="padding:6px 8px; font-size:11px;">✕</button>
         </div>
       </div>`).join('')}
     </div>`;
@@ -3607,10 +3599,32 @@ function closeModal(id) { document.getElementById(id).classList.remove('open'); 
 function backdropClose(e, id) { if (e.target.id===id) closeModal(id); }
 
 function openTransactionModal(type='支出') {
+  state.editingTxId = null;
+  document.getElementById('transaction-modal-title').textContent = '新增記帳';
+  document.getElementById('transaction-save-btn').textContent = '儲存';
   document.getElementById('tx-amount').value = '';
   document.getElementById('tx-note').value   = '';
   document.getElementById('tx-date').value   = new Date().toISOString().split('T')[0];
   selectTxType(type);
+  openModal('transaction-modal');
+}
+
+function openEditTransaction(id) {
+  const tx = state.transactions.find(t => String(t.id) === String(id));
+  if (!tx) { toast('找不到這筆記錄'); return; }
+  state.editingTxId = tx.id;
+  document.getElementById('transaction-modal-title').textContent = '修改記帳';
+  document.getElementById('transaction-save-btn').textContent = '更新';
+  selectTxType(tx.type || '支出');
+  const normalized = normalizeCategory(tx.category);
+  const catEl = document.getElementById('tx-category');
+  if (![...catEl.options].some(o => o.value === normalized)) {
+    catEl.insertAdjacentHTML('beforeend', `<option value="${normalized}">${normalized}</option>`);
+  }
+  catEl.value = normalized;
+  document.getElementById('tx-amount').value = tx.amount || '';
+  document.getElementById('tx-date').value = tx.date || new Date().toISOString().split('T')[0];
+  document.getElementById('tx-note').value = tx.note || '';
   openModal('transaction-modal');
 }
 
@@ -3642,6 +3656,20 @@ async function saveTransaction() {
   const note = document.getElementById('tx-note').value.trim();
   if (!cat || !amt || !date) { toast('請填寫必要欄位'); return; }
   const rec = { type: state.txType, category: normalizeCategory(cat), amount: amt, date, note: note||null };
+  if (state.editingTxId != null) {
+    if (sb) {
+      const {error} = await sb.from('transactions').update(rec).eq('id', state.editingTxId);
+      if (error) { toast('更新失敗: '+error.message); return; }
+    } else {
+      const tx = state.transactions.find(t => String(t.id) === String(state.editingTxId));
+      if (tx) Object.assign(tx, rec);
+    }
+    state.editingTxId = null;
+    closeModal('transaction-modal');
+    toast('✓ 記帳已更新');
+    await refreshData();
+    return;
+  }
   if (sb) {
     const {error} = await sb.from('transactions').insert(rec);
     if (error) { toast('儲存失敗: '+error.message); return; }
